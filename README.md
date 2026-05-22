@@ -210,17 +210,23 @@ node index.js transfer --chain base --to 0x742d35Cc6634C0532925a3b844Bc454e4438f
 
 ---
 
-## 🤖 OpenClaw Integration Guide
+## 🤖 AI Agent Integration Guide
 
-To load this skill into your OpenClaw agent, follow these steps:
+To load this skill into your AI Agent framework, follow these steps:
 
-1. **Place the Skill Folder**: Copy or clone this repository into your OpenClaw agent's `skills/` directory (name the folder `web3-ops`):
+1. **Place the Skill Folder**: Copy or clone this repository into your agent's skills directory (typically located at `~/.agents/skills/`):
    ```bash
-   # Inside your OpenClaw project directory
-   cp -r /path/to/skill-web3 ./skills/web3-ops
+   # Clone or copy into your agent's skills folder as 'web3-ops'
+   git clone https://github.com/perasyudha/skill-web3.git ~/.agents/skills/web3-ops
    ```
 
-2. **Configure Environment Variables**: Open the main `.env` file of your OpenClaw project and configure the required keys:
+2. **Install Dependencies**: Navigate to the skill folder and install the required dependencies:
+   ```bash
+   cd ~/.agents/skills/web3-ops
+   npm install
+   ```
+
+3. **Configure Environment Variables**: Open the main `.env` file of your agent project and configure the required keys:
    ```env
    PRIVATE_KEY="0x..." # The private key of your AI agent's EVM wallet
    
@@ -229,7 +235,7 @@ To load this skill into your OpenClaw agent, follow these steps:
    ETHERSCAN_API_KEY="your_etherscan_key"
    ```
 
-3. **Enable Auto-loading**: Upon boot, OpenClaw automatically parses the `SKILL.md` manifest in the skill folder. This configures the LLM (e.g. Gemini) to interpret user requests and call the corresponding CLI command dynamically.
+4. **Enable Auto-loading**: Upon boot, the agent framework automatically parses the `SKILL.md` manifest in the skill folder. This configures the LLM (e.g. Gemini) to interpret user requests and call the corresponding CLI command dynamically.
 
 ---
 
