@@ -84,8 +84,11 @@ export const SUPPORTED_CHAINS = {
     symbol: "ETH",
     rpc: process.env.BASE_RPC_URL || "https://1rpc.io/base",
     rpcs: [
-      "https://broken-rpc-endpoint-test-1.org",
-      "https://broken-rpc-endpoint-test-2.org"
+      process.env.BASE_RPC_URL,
+      "https://1rpc.io/base",
+      "https://rpc.ankr.com/base",
+      "https://base-rpc.publicnode.com",
+      "https://mainnet.base.org"
     ].filter(Boolean),
     explorer: "https://basescan.org"
   },
@@ -246,7 +249,7 @@ export const TOKEN_MAP = {
   // Arbitrum One (42161)
   42161: {
     ETH: "0x0000000000000000000000000000000000000000",
-    WETH: "0x82aF49447D8a07e3bd95BD0d56f352415231Cl11",
+    WETH: "0x82aF49447D8a07e3bd95BD0d56f352415231C111",
     USDC: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
     "USDC.E": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
     USDT: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9"

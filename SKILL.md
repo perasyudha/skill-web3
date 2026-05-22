@@ -36,8 +36,9 @@ Check native coin (ETH, MATIC, BNB, S) or a specific ERC-20 token balance using 
 *   *Example:* `node skills/web3-ops/index.js balance --chain base --token AERO`
 
 ### 3. Scan Portfolio (New)
-Scan and list all tokens with a positive balance in your wallet on a specific chain. Automatically detects "degen/micin" tokens using block explorer transaction history.
-*   **Usage:** `node skills/web3-ops/index.js portfolio --chain <chain> [--json]`
+Scan and list all tokens with a positive balance in your wallet. If no chain is specified, it will scan all supported networks in parallel. Automatically detects "degen/micin" tokens using block explorer transaction history.
+*   **Usage (All Chains):** `node skills/web3-ops/index.js portfolio [--json]`
+*   **Usage (Single Chain):** `node skills/web3-ops/index.js portfolio --chain <chain> [--json]`
 
 ### 4. Transfer Coins or Tokens
 Send native coins or ERC-20 tokens to another address.

@@ -47,7 +47,7 @@ program
 program
   .command("portfolio")
   .description("Scan and list all active token balances (>0) in your wallet")
-  .requiredOption("-c, --chain <chain>", "Blockchain network (e.g. base, arbitrum, polygon, etc.)")
+  .option("-c, --chain <chain>", "Blockchain network (e.g. base, arbitrum, polygon, etc. or 'all')", "all")
   .action((options) => {
     getPortfolio(getMergedOpts(options));
   });
