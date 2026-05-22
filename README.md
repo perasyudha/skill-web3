@@ -210,6 +210,29 @@ node index.js transfer --chain base --to 0x742d35Cc6634C0532925a3b844Bc454e4438f
 
 ---
 
+## 🤖 OpenClaw Integration Guide
+
+To load this skill into your OpenClaw agent, follow these steps:
+
+1. **Place the Skill Folder**: Copy or clone this repository into your OpenClaw agent's `skills/` directory (name the folder `web3-ops`):
+   ```bash
+   # Inside your OpenClaw project directory
+   cp -r /path/to/skill-web3 ./skills/web3-ops
+   ```
+
+2. **Configure Environment Variables**: Open the main `.env` file of your OpenClaw project and configure the required keys:
+   ```env
+   PRIVATE_KEY="0x..." # The private key of your AI agent's EVM wallet
+   
+   # Optional: Explorer API Keys (highly recommended for auto-detecting custom/degen tokens in portfolio)
+   BASESCAN_API_KEY="your_basescan_key"
+   ETHERSCAN_API_KEY="your_etherscan_key"
+   ```
+
+3. **Enable Auto-loading**: Upon boot, OpenClaw automatically parses the `SKILL.md` manifest in the skill folder. This configures the LLM (e.g. Gemini) to interpret user requests and call the corresponding CLI command dynamically.
+
+---
+
 ## 🛡️ License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
