@@ -46,12 +46,27 @@ graph TD
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start & Installation
 
-### 1. Installation
+You can install this skill in three different ways depending on your preference:
 
-Clone this repository and install the dependencies:
+### Opsi A: Automated NPX Installer (Recommended)
+You can install this skill to your system's global agent skills directory using a single command:
+```bash
+npx openclaw-web3-ops
+```
+*Note: This will automatically download the package, copy it to `~/.agents/skills/web3-ops`, configure a default `.env`, and install all dependencies. If you wish to install to a custom path, pass it as an argument:*
+```bash
+npx openclaw-web3-ops ./my-custom-path/web3-ops
+```
 
+### Opsi B: Conversational Install via AI Agent
+If you are running an AI Agent (like Claude Code, Cursor, or OpenClaw) with terminal capabilities, simply paste the following prompt in the chat:
+> *"Please install the web3-ops skill from https://github.com/perasyudha/skill-web3.git to my skills directory at ~/.agents/skills/web3-ops"*
+The agent will automatically clone, setup the folder structure, and install dependencies.
+
+### Opsi C: Manual Setup
+Clone this repository and install the dependencies manually:
 ```bash
 git clone https://github.com/perasyudha/skill-web3.git
 cd skill-web3
@@ -212,18 +227,29 @@ node index.js transfer --chain base --to 0x742d35Cc6634C0532925a3b844Bc454e4438f
 
 ## 🤖 AI Agent Integration Guide
 
-To load this skill into your AI Agent framework, follow these steps:
+To load this skill into your AI Agent framework, choose one of the following methods:
 
-1. **Place the Skill Folder**: Copy or clone this repository into your agent's skills directory (typically located at `~/.agents/skills/`):
+### Option A: Direct Installer (Recommended)
+Simply run the installer directly in your terminal:
+```bash
+npx openclaw-web3-ops
+```
+This automatically sets up the skill directory at `~/.agents/skills/web3-ops` and installs all dependencies in one command.
+
+### Option B: Conversational / Agentic Setup
+Ask your agent (e.g. Claude Code or OpenClaw Telegram Bot) to set it up:
+> *"Please install the web3-ops skill from https://github.com/perasyudha/skill-web3.git to my skills directory at ~/.agents/skills/web3-ops"*
+
+### Option C: Manual Setup
+1. **Place the Skill Folder**: Clone this repository into your agent's skills directory (typically located at `~/.agents/skills/`):
    ```bash
-   # Clone or copy into your agent's skills folder as 'web3-ops'
    git clone https://github.com/perasyudha/skill-web3.git ~/.agents/skills/web3-ops
    ```
 
 2. **Install Dependencies**: Navigate to the skill folder and install the required dependencies:
    ```bash
    cd ~/.agents/skills/web3-ops
-   npm install
+   npm install --omit=dev
    ```
 
 3. **Configure Environment Variables**: Open the main `.env` file of your agent project and configure the required keys:

@@ -4,6 +4,9 @@
   "description": "Web3 On-chain operations skill for OpenClaw (Gemini Telegram Bot)",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "openclaw-web3-ops": "./bin/install.js"
+  },
   "scripts": {
     "start": "node index.js"
   },
