@@ -280,6 +280,14 @@ Ask your agent (e.g. Claude Code or OpenClaw Telegram Bot) to set it up:
 
 ---
 
+## 📜 Changelog
+
+### v1.0.1
+*   **Keamanan & Dokumentasi**: Menambahkan penjelasan keamanan teknis (**Security & Sandboxing**) terkait penyimpanan *private key* lokal (local-first) dan pembatasan konteks pembacaan bagi model AI Agent (LLM).
+*   **Fitur NFT**: Implementasi dukungan *minting* NFT via autodeteksi URL marketplace dan fungsi *smart contract*.
+
+---
+
 ## 💝 Support & Donation
 
 If you find this skill useful and want to support its active development, donations are highly appreciated:
