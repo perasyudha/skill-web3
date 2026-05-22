@@ -1,21 +1,30 @@
 import { ethers } from "ethers";
-import { getWallet, parseUnits } from "./common.js";
+import {
+  getWallet,
+  parseUnits,
+  logInfo,
+  logSuccess,
+  logError,
+  logWarning,
+  printColor
+} from "./common.js";
 
-export async function mintNft(options) {
+export async function mintNft(options = {}) {
   try {
     const {
       chain,
       contract: contractAddress,
       function: functionSig = "mint(uint256)",
       args: rawArgs = "[1]",
-      value = "0"
+      value = "0",
+      simulate
     } = options;
 
     if (!ethers.isAddress(contractAddress)) {
-      throw new Error(`Alamat kontrak NFT "${contractAddress}" tidak valid.`);
+      throw new Error(`NFT contract address "${contractAddress}" is not a valid EVM address.`);
     }
 
-    const { wallet, chainConfig } = getWallet(chain);
+    const { wallet, chainConfig } = getWallet(chain, options);
     
     // Parse arguments
     let parsedArgs = [];
@@ -35,16 +44,21 @@ export async function mintNft(options) {
 
     const valueWei = parseUnits(value, 18);
 
-    console.log(`\n==================================================`);
-    console.log(`NFT MINTING REQUEST`);
-    console.log(`==================================================`);
-    console.log(`Jaringan   : ${chainConfig.name}`);
-    console.log(`Kontrak    : ${contractAddress}`);
-    console.log(`Fungsi     : ${functionSig}`);
-    console.log(`Argumen    : ${JSON.stringify(parsedArgs)}`);
-    console.log(`Value (ETH): ${value} (${chainConfig.symbol})`);
-    console.log(`Wallet     : ${wallet.address}`);
-    console.log(`==================================================\n`);
+    if (!options.json) {
+      console.log(`\n==================================================`);
+      console.log(printColor("NFT MINTING REQUEST", "bold"));
+      console.log(`==================================================`);
+      console.log(`Network    : ${chainConfig.name}`);
+      console.log(`Contract   : ${contractAddress}`);
+      console.log(`Function   : ${functionSig}`);
+      console.log(`Arguments  : ${JSON.stringify(parsedArgs)}`);
+      console.log(`Value (${chainConfig.symbol}): ${value}`);
+      console.log(`Wallet     : ${wallet.address}`);
+      if (simulate) {
+        console.log(`Simulation : ${printColor("TRUE (DRY-RUN)", "yellow")}`);
+      }
+      console.log(`==================================================\n`);
+    }
 
     // Dynamic ABI creation based on function signature
     // Example: "mint(uint256)" -> "function mint(uint256) payable"
@@ -63,20 +77,38 @@ export async function mintNft(options) {
     // Example: "function mint(uint256) payable" -> "mint"
     const match = functionSig.match(/([a-zA-Z0-9_]+)\s*\(/);
     if (!match) {
-      throw new Error(`Gagal mengurai nama fungsi dari signature "${functionSig}". Contoh format yang benar: "mint(uint256)"`);
+      throw new Error(`Failed to parse function name from signature "${functionSig}". correct format example: "mint(uint256)"`);
     }
     const functionName = match[1];
 
-    console.log(`Memanggil fungsi "${functionName}" pada kontrak NFT...`);
+    if (simulate) {
+      logInfo(`Simulating NFT mint calling "${functionName}" (dry run)...`, options);
+      const estimatedGas = await contract[functionName].estimateGas(...parsedArgs, {
+        value: valueWei
+      });
+      logSuccess("NFT mint simulation succeeded.", options);
+      console.log(JSON.stringify({
+        success: true,
+        simulated: true,
+        action: "nft_mint",
+        chain: chainConfig.name,
+        contract: contractAddress,
+        estimatedGas: estimatedGas.toString()
+      }, null, 2));
+      return;
+    }
+
+    logInfo(`Calling function "${functionName}" on NFT contract...`, options);
 
     const txResponse = await contract[functionName](...parsedArgs, {
       value: valueWei
     });
 
-    console.log(`Transaksi minting dikirim. Tx Hash: ${txResponse.hash}`);
-    console.log("Menunggu konfirmasi blok...");
+    logInfo(`Mint transaction submitted. Tx Hash: ${txResponse.hash}`, options);
+    logInfo("Waiting for block confirmation...", options);
     
     const receipt = await txResponse.wait(1);
+    logSuccess("Transaction confirmed successfully.", options);
 
     console.log(JSON.stringify({
       success: true,

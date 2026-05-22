@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 import "dotenv/config";
-
 import { Command } from "commander";
-import { getAddress, getBalance } from "./actions/wallet.js";
+import { getAddress, getBalance, getPortfolio } from "./actions/wallet.js";
 import { transfer } from "./actions/transfer.js";
 import { swapOrBridge } from "./actions/swapBridge.js";
 import { mintNft } from "./actions/mintNft.js";
@@ -14,111 +13,112 @@ const program = new Command();
 program
   .name("web3-ops")
   .description("CLI Utility for EVM Web3 operations as an OpenClaw Agent Skill")
-  .version("1.0.0");
+  .version("1.0.0")
+  // Global Options
+  .option("--json", "Output strictly in JSON format (silences informational logs)", false)
+  .option("--rpc <rpcUrl>", "Override default RPC URL with a custom node URL")
+  .option("--simulate", "Simulate the transaction (dry run) without broadcasting it", false);
+
+// Helper to merge command options with global options
+const getMergedOpts = (cmdOpts) => {
+  return { ...cmdOpts, ...program.opts() };
+};
 
 // 1. Get Wallet Address
 program
   .command("address")
-  .description("Dapatkan alamat wallet Anda")
-  .option("-c, --chain <chain>", "Jaringan blockchain (misal: ethereum, arbitrum, base, dll.)", "ethereum")
+  .description("Get your configured EVM wallet address")
+  .option("-c, --chain <chain>", "Blockchain network (e.g. ethereum, arbitrum, base, etc.)", "ethereum")
   .action((options) => {
-    getAddress(options.chain);
+    getAddress(getMergedOpts(options));
   });
 
 // 2. Get Balance
 program
   .command("balance")
-  .description("Cek saldo native koin atau token ERC-20")
-  .requiredOption("-c, --chain <chain>", "Jaringan blockchain (misal: arbitrum, base, dll.)")
-  .option("-t, --token <tokenAddress>", "Alamat kontrak token ERC-20 (opsional, kosongkan untuk native koin)")
+  .description("Check native coin or ERC-20 token balance")
+  .requiredOption("-c, --chain <chain>", "Blockchain network (e.g. arbitrum, base, polygon, etc.)")
+  .option("-t, --token <symbolOrAddress>", "ERC-20 token symbol or contract address (omit for native balance)")
   .action((options) => {
-    getBalance(options.chain, options.token);
+    getBalance(getMergedOpts(options));
   });
 
-// 3. Transfer Koin/Token
+// 3. Scan Portfolio (New)
+program
+  .command("portfolio")
+  .description("Scan and list all active token balances (>0) in your wallet")
+  .requiredOption("-c, --chain <chain>", "Blockchain network (e.g. base, arbitrum, polygon, etc.)")
+  .action((options) => {
+    getPortfolio(getMergedOpts(options));
+  });
+
+// 4. Transfer Coin/Token
 program
   .command("transfer")
-  .description("Kirim koin native atau token ERC-20 ke alamat lain")
-  .requiredOption("-c, --chain <chain>", "Jaringan blockchain")
-  .requiredOption("-to, --to <address>", "Alamat dompet penerima")
-  .requiredOption("-a, --amount <amount>", "Jumlah koin/token yang akan dikirim (dalam unit normal, misal: 0.05)")
-  .option("-t, --token <tokenAddress>", "Alamat kontrak token ERC-20 (opsional)")
+  .description("Send native coin or ERC-20 token to another wallet address")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-to, --to <address>", "Recipient wallet address")
+  .requiredOption("-a, --amount <amount>", "Amount of tokens to send (e.g. 0.05)")
+  .option("-t, --token <symbolOrAddress>", "ERC-20 token symbol or contract address (omit for native coin)")
   .action((options) => {
-    transfer(options.chain, options.to, options.amount, options.token);
+    transfer(getMergedOpts(options));
   });
 
-// 4. Swap Token (Pada chain yang sama)
+// 5. Swap Token (Same-chain)
 program
   .command("swap")
-  .description("Lakukan swap token (misal: ETH ke USDC) di jaringan yang sama")
-  .requiredOption("-c, --chain <chain>", "Jaringan blockchain")
-  .requiredOption("-f, --fromToken <symbolOrAddress>", "Token asal (misal: ETH, USDC, atau alamat kontrak)")
-  .requiredOption("-t, --toToken <symbolOrAddress>", "Token tujuan (misal: USDC, WETH, atau alamat kontrak)")
-  .requiredOption("-a, --amount <amount>", "Jumlah token asal yang akan ditukar")
-  .option("-m, --mode <mode>", "Mode pemilihan rute: 'auto' atau 'manual'", "auto")
-  .option("-p, --provider <provider>", "Provider untuk manual swap: 'lifi', 'relay', 'uniswap', 'pancakeswap'", "lifi")
-  .option("-s, --slippage <percent>", "Slippage toleransi dalam persen (contoh: 0.5)", "0.5")
+  .description("Swap tokens on the same blockchain network (e.g. ETH to USDC)")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-f, --fromToken <symbolOrAddress>", "Source token symbol or contract address")
+  .requiredOption("-t, --toToken <symbolOrAddress>", "Destination token symbol or contract address")
+  .requiredOption("-a, --amount <amount>", "Amount of source tokens to swap")
+  .option("-m, --mode <mode>", "Routing mode: 'auto' (aggregator) or 'manual'", "auto")
+  .option("-p, --provider <provider>", "Manual swap provider: 'lifi', 'relay', 'uniswap', 'pancakeswap'", "lifi")
+  .option("-s, --slippage <percent>", "Slippage tolerance in percent (e.g. 0.5)", "0.5")
   .action((options) => {
-    swapOrBridge({
-      chain: options.chain,
-      fromToken: options.fromToken,
-      toToken: options.toToken,
-      amount: options.amount,
-      mode: options.mode,
-      provider: options.provider,
-      slippage: options.slippage
-    });
+    swapOrBridge(getMergedOpts(options));
   });
 
-// 5. Bridge Token (Lintas jaringan)
+// 6. Bridge Token (Cross-chain)
 program
   .command("bridge")
-  .description("Kirim dan swap token lintas jaringan blockchain (misal: ETH dari Arbitrum ke USDC di Base)")
-  .requiredOption("-fc, --fromChain <chain>", "Jaringan sumber")
-  .requiredOption("-tc, --toChain <chain>", "Jaringan tujuan")
-  .requiredOption("-f, --fromToken <symbolOrAddress>", "Token asal")
-  .requiredOption("-t, --toToken <symbolOrAddress>", "Token tujuan")
-  .requiredOption("-a, --amount <amount>", "Jumlah token asal yang akan dikirim")
-  .option("-m, --mode <mode>", "Mode: 'auto' atau 'manual'", "auto")
-  .option("-p, --provider <provider>", "Provider untuk manual bridge: 'lifi', 'relay'", "lifi")
-  .option("-s, --slippage <percent>", "Slippage toleransi dalam persen (contoh: 0.5)", "0.5")
+  .description("Bridge and swap tokens across different blockchains (e.g. ETH on Arbitrum to USDC on Base)")
+  .requiredOption("-fc, --fromChain <chain>", "Source blockchain network")
+  .requiredOption("-tc, --toChain <chain>", "Destination blockchain network")
+  .requiredOption("-f, --fromToken <symbolOrAddress>", "Source token symbol or contract address")
+  .requiredOption("-t, --toToken <symbolOrAddress>", "Destination token symbol or contract address")
+  .requiredOption("-a, --amount <amount>", "Amount of source tokens to bridge")
+  .option("-m, --mode <mode>", "Routing mode: 'auto' or 'manual'", "auto")
+  .option("-p, --provider <provider>", "Manual bridge provider: 'lifi', 'relay'", "lifi")
+  .option("-s, --slippage <percent>", "Slippage tolerance in percent (e.g. 0.5)", "0.5")
   .action((options) => {
-    swapOrBridge({
-      fromChain: options.fromChain,
-      toChain: options.toChain,
-      fromToken: options.fromToken,
-      toToken: options.toToken,
-      amount: options.amount,
-      mode: options.mode,
-      provider: options.provider,
-      slippage: options.slippage
-    });
+    swapOrBridge(getMergedOpts(options));
   });
 
-// 6. Mint NFT
+// 7. Mint NFT
 program
   .command("mint")
-  .description("Mint/claim NFT di jaringan EVM")
-  .requiredOption("-c, --chain <chain>", "Jaringan blockchain")
-  .requiredOption("-ct, --contract <contractAddress>", "Alamat kontrak NFT")
-  .option("-f, --function <functionSig>", "Signature fungsi mint (contoh: 'mint(uint256)' atau 'claim(address,uint256)')", "mint(uint256)")
-  .option("-args, --args <jsonArray>", "Argumen fungsi dalam bentuk JSON array (contoh: '[1]' atau '[\"0x...\", 1]')", "[1]")
-  .option("-v, --value <value>", "Jumlah native token yang dikirim (misal jika NFT berbayar, dalam ETH/MATIC)", "0")
+  .description("Mint/claim an NFT on an EVM network")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-ct, --contract <contractAddress>", "NFT contract address")
+  .option("-f, --function <functionSig>", "Mint function signature", "mint(uint256)")
+  .option("-args, --args <jsonArray>", "Function arguments as a JSON array (e.g. '[1]')", "[1]")
+  .option("-v, --value <value>", "Native token value to send (for paid mints, in ETH/MATIC)", "0")
   .action((options) => {
-    mintNft(options);
+    mintNft(getMergedOpts(options));
   });
 
-// 7. Custom Transaction (Raw Tx)
+// 8. Custom Transaction (Raw Tx)
 program
   .command("custom")
-  .description("Kirim transaksi kustom dengan data mentah (hex calldata)")
-  .requiredOption("-c, --chain <chain>", "Jaringan blockchain")
-  .requiredOption("-to, --to <address>", "Alamat tujuan transaksi (kontrak atau dompet)")
-  .option("-d, --data <hex>", "Calldata hex transaksi (dimulai dengan 0x)", "0x")
-  .option("-v, --value <value>", "Jumlah native token yang dikirim (dalam unit normal, contoh: 0.001)", "0")
-  .option("-g, --gasLimit <gas>", "Limit gas manual (opsional)")
+  .description("Broadcast a custom transaction with raw hex calldata")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-to, --to <address>", "Target contract or wallet address")
+  .option("-d, --data <hex>", "Hex calldata starting with 0x", "0x")
+  .option("-v, --value <value>", "Native token value to send (in normal units, e.g. 0.001)", "0")
+  .option("-g, --gasLimit <gas>", "Manual gas limit (optional)")
   .action((options) => {
-    executeCustomTx(options);
+    executeCustomTx(getMergedOpts(options));
   });
 
 program.parse(process.argv);

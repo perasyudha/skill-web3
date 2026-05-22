@@ -1,36 +1,50 @@
 import { ethers } from "ethers";
-import { getWallet, parseUnits } from "./common.js";
+import {
+  getWallet,
+  parseUnits,
+  logInfo,
+  logSuccess,
+  logError,
+  logWarning,
+  printColor
+} from "./common.js";
 
-export async function executeCustomTx(options) {
+export async function executeCustomTx(options = {}) {
   try {
     const {
       chain,
       to,
       data = "0x",
       value = "0",
-      gasLimit
+      gasLimit,
+      simulate
     } = options;
 
     if (!ethers.isAddress(to)) {
-      throw new Error(`Alamat tujuan "to" (${to}) tidak valid.`);
+      throw new Error(`Target address "to" (${to}) is not a valid EVM address.`);
     }
 
     if (!data.startsWith("0x")) {
-      throw new Error(`Data transaksi harus dalam format hex desimal (dimulai dengan "0x").`);
+      throw new Error(`Transaction calldata must be a valid hex string starting with "0x".`);
     }
 
-    const { wallet, chainConfig } = getWallet(chain);
+    const { wallet, chainConfig } = getWallet(chain, options);
     const valueWei = parseUnits(value, 18);
 
-    console.log(`\n==================================================`);
-    console.log(`CUSTOM TRANSACTION EXECUTION`);
-    console.log(`==================================================`);
-    console.log(`Jaringan   : ${chainConfig.name}`);
-    console.log(`Tujuan (To): ${to}`);
-    console.log(`Value      : ${value} (${chainConfig.symbol})`);
-    console.log(`Data (Hex) : ${data.substring(0, 66)}${data.length > 66 ? "..." : ""}`);
-    console.log(`Wallet     : ${wallet.address}`);
-    console.log(`==================================================\n`);
+    if (!options.json) {
+      console.log(`\n==================================================`);
+      console.log(printColor("CUSTOM TRANSACTION EXECUTION", "bold"));
+      console.log(`==================================================`);
+      console.log(`Network    : ${chainConfig.name}`);
+      console.log(`Target (To): ${to}`);
+      console.log(`Value (${chainConfig.symbol}): ${value}`);
+      console.log(`Data (Hex) : ${data.substring(0, 66)}${data.length > 66 ? "..." : ""}`);
+      console.log(`Wallet     : ${wallet.address}`);
+      if (simulate) {
+        console.log(`Simulation : ${printColor("TRUE (DRY-RUN)", "yellow")}`);
+      }
+      console.log(`==================================================\n`);
+    }
 
     const txRequest = {
       to: to,
@@ -42,13 +56,29 @@ export async function executeCustomTx(options) {
       txRequest.gasLimit = BigInt(gasLimit);
     }
 
-    console.log("Mengirim transaksi kustom...");
+    if (simulate) {
+      logInfo("Simulating custom transaction (dry run)...", options);
+      const estimatedGas = await wallet.estimateGas(txRequest);
+      logSuccess("Custom transaction simulation succeeded.", options);
+      console.log(JSON.stringify({
+        success: true,
+        simulated: true,
+        action: "custom_tx",
+        chain: chainConfig.name,
+        target: to,
+        estimatedGas: estimatedGas.toString()
+      }, null, 2));
+      return;
+    }
+
+    logInfo("Sending custom transaction...", options);
     const txResponse = await wallet.sendTransaction(txRequest);
 
-    console.log(`Transaksi terkirim. Tx Hash: ${txResponse.hash}`);
-    console.log("Menunggu konfirmasi blok...");
+    logInfo(`Transaction submitted. Tx Hash: ${txResponse.hash}`, options);
+    logInfo("Waiting for block confirmation...", options);
     
     const receipt = await txResponse.wait(1);
+    logSuccess("Transaction confirmed successfully.", options);
 
     console.log(JSON.stringify({
       success: true,
