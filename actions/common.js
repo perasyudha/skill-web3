@@ -89,7 +89,7 @@ export const SUPPORTED_CHAINS = {
     id: 56,
     name: "BNB Smart Chain",
     symbol: "BNB",
-    rpc: process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org",
+    rpc: process.env.BSC_RPC_URL || "https://1rpc.io/bnb",
     explorer: "https://bscscan.com"
   },
   avalanche: {
