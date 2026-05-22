@@ -8,6 +8,13 @@ import { swapOrBridge } from "./actions/swapBridge.js";
 import { mintNft } from "./actions/mintNft.js";
 import { executeCustomTx } from "./actions/customTx.js";
 
+// Import new advanced trading & security modules
+import { calculatePnL } from "./actions/pnl.js";
+import { analyzeTokenSecurity } from "./actions/auditor.js";
+import { getTradingSignal } from "./actions/signals.js";
+import { trackWhales } from "./actions/whales.js";
+import { runPriceMonitor } from "./actions/monitor.js";
+
 const program = new Command();
 
 program
@@ -17,7 +24,8 @@ program
   // Global Options
   .option("--json", "Output strictly in JSON format (silences informational logs)", false)
   .option("--rpc <rpcUrl>", "Override default RPC URL with a custom node URL")
-  .option("--simulate", "Simulate the transaction (dry run) without broadcasting it", false);
+  .option("--simulate", "Simulate the transaction (dry run) without broadcasting it", false)
+  .option("--anti-mev", "Route transaction through private RPCs to prevent MEV searcher sandwich attacks", false);
 
 // Helper to merge command options with global options
 const getMergedOpts = (cmdOpts) => {
@@ -119,6 +127,66 @@ program
   .option("-g, --gasLimit <gas>", "Manual gas limit (optional)")
   .action((options) => {
     executeCustomTx(getMergedOpts(options));
+  });
+
+// 9. Profit & Loss Tracker (PnL)
+program
+  .command("pnl")
+  .description("Track PnL (profit and loss) for a specific token")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-t, --token <symbolOrAddress>", "ERC-20 token symbol or contract address")
+  .option("-b, --buyPrice <price>", "Manually specify average buy price in USD (optional)")
+  .action((options) => {
+    calculatePnL(getMergedOpts(options));
+  });
+
+// 10. Cutloss & Takeprofit Monitor
+program
+  .command("monitor")
+  .description("Monitor token price and execute auto-swap on cutloss or takeprofit")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-t, --token <symbolOrAddress>", "ERC-20 token symbol or contract address")
+  .requiredOption("-a, --amount <amount>", "Amount of tokens to sell on trigger")
+  .option("--cutloss <value>", "Cutloss trigger (e.g. -10% or USD nominal price e.g. 0.85)")
+  .option("--takeprofit <value>", "Takeprofit trigger (e.g. +20% or USD nominal price e.g. 1.50)")
+  .option("--max-checks <count>", "Maximum number of price checks (polling loop limits)", "60")
+  .option("--interval <seconds>", "Polling interval in seconds", "20")
+  .option("--alert", "Send structured alert output if target is reached", false)
+  .action((options) => {
+    runPriceMonitor(getMergedOpts(options));
+  });
+
+// 11. Trading Signals
+program
+  .command("signal")
+  .description("Get technical indicators (RSI/EMA) and trading recommendations for a token")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-t, --token <symbolOrAddress>", "ERC-20 token symbol or contract address")
+  .option("--alert", "Flag alert to AI agent if signal is extreme (Strong Buy/Strong Sell)", false)
+  .action((options) => {
+    getTradingSignal(getMergedOpts(options));
+  });
+
+// 12. Smart Contract Auditor
+program
+  .command("analyze")
+  .description("Run a security audit on a smart contract using GoPlus Security API")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-t, --token <symbolOrAddress>", "ERC-20 token symbol or contract address")
+  .action((options) => {
+    analyzeTokenSecurity(getMergedOpts(options));
+  });
+
+// 13. Whale Tracker
+program
+  .command("whales")
+  .description("Scan blockchain explorer for large transactions of a token")
+  .requiredOption("-c, --chain <chain>", "Blockchain network")
+  .requiredOption("-t, --token <symbolOrAddress>", "ERC-20 token symbol or contract address")
+  .option("--min-usd <value>", "Minimum USD value of transaction to count as whale", "50000")
+  .option("--alert", "Alert AI agent if recent whale movement occurs", false)
+  .action((options) => {
+    trackWhales(getMergedOpts(options));
   });
 
 program.parse(process.argv);

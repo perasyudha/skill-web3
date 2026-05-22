@@ -382,13 +382,23 @@ export function getChainConfig(chainInput) {
   throw new Error(`Chain "${chainInput}" is not supported. Supported chains include: eth, arbitrum, base, optimism, polygon, bsc, avalanche, sonic, sepolia, base-sepolia, etc.`);
 }
 
-// Get Signer & Provider (supports options.rpc)
+// Anti-MEV Secure Private RPC Endpoints mapped by Chain ID
+export const ANTI_MEV_RPCS = {
+  1: "https://rpc.flashbots.net", // Ethereum Mainnet
+  56: "https://bsc-private.bloxroute.com", // BNB Smart Chain (bloxroute)
+  137: "https://polygon-private.bloxroute.com" // Polygon (bloxroute)
+};
+
+// Get Signer & Provider (supports options.rpc and options.antiMev)
 export async function getWallet(chainInput, options = {}) {
   const chainConfig = getChainConfig(chainInput);
   
   let rpcUrls = [];
   if (options.rpc) {
     rpcUrls = [options.rpc];
+  } else if (options.antiMev && ANTI_MEV_RPCS[chainConfig.id]) {
+    logInfo(`MEV Protection active. Routing transactions via secure RPC: ${ANTI_MEV_RPCS[chainConfig.id]}`, options);
+    rpcUrls = [ANTI_MEV_RPCS[chainConfig.id], ...(chainConfig.rpcs || [chainConfig.rpc])];
   } else {
     rpcUrls = [...(chainConfig.rpcs || [chainConfig.rpc])];
   }
