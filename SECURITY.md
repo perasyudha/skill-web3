@@ -31,7 +31,37 @@ graph TD
 
 ---
 
-## 🛡️ 2. On-Chain Security Features
+## 🛡️ 2. Threat Model & Permission Boundaries
+
+To ensure developer and operator confidence, we explicitly define the access limits, capabilities, and system requirements of the `web3-ops` execution loop:
+
+### A. Skill Capabilities & Limits Matrix
+
+| Parameter | Capability / Status | Technical Implementation Detail |
+| :--- | :--- | :--- |
+| **Can Access** | **YES** | Local `.env` file, blockchain RPC nodes, and public price/security APIs (DexScreener, GeckoTerminal, GoPlus). |
+| **Cannot Access** | **NO** | Host filesystem outside the project directory, system settings, user credentials, or other system environment variables. |
+| **Execute Shell** | **NO** | The skill does **not** execute arbitrary shell commands. It does not run scripts, compile external code, or invoke shell interpreters (`sh`, `bash`, `cmd`). It maps strict input arguments to predefined static functions using the `commander` package. |
+| **Sign Transactions** | **YES** | The skill signs transaction payloads locally in memory using `ethers.js` via the configured wallet. It only broadcasts signed payloads to public or private RPCs. |
+| **Store Keys** | **NO** | The skill has **zero key storage persistence**. It does not write keys to disks, local logs, external servers, databases, or cache files. Keys are loaded from `process.env` dynamically and erased immediately upon process exit. |
+| **Autonomous** | **NO** | The skill is **not autonomous**. It only executes on-demand when called via the CLI. Even the pricing `monitor` command runs in a synchronous, foreground loop started explicitly by the operator and terminates gracefully upon hitting limits or on user cancel (`Ctrl+C`). |
+
+### B. Explicit Permission Boundaries
+
+When integrating this skill into an AI Agent framework, the required system permissions are strictly bounded:
+
+> [!IMPORTANT]
+> ### Required Permission Boundary:
+> 1. **Read-Only Blockchain Access**: Enabled by default to fetch native/token balances, resolve token contract addresses, fetch pricing data, track transactions, and perform GoPlus contract audits.
+> 2. **Optional Wallet Signing (Write Access)**: Only requested when executing transaction commands (`transfer`, `swap`, `bridge`, `mint`, `custom`, and `monitor` when limits are breached). If the `PRIVATE_KEY` is not provided, the skill automatically falls back to read-only mode for query-based commands.
+> 3. **No Private Key Persistence**: The skill operates under a strict memory-only lifecycle. No local databases, state files, or cookies are used to retain credentials.
+> 4. **Outbound Network Access**: Bounded strictly to:
+>    * Blockchain JSON-RPC endpoints (e.g., private anti-MEV RPCs, public Infura/Alchemy/Ankr nodes).
+>    * Public Web3 services: GeckoTerminal API, DexScreener API, GoPlus Security API, Li.Fi Aggregator API.
+
+---
+
+## 🛡️ 3. On-Chain Security Features
 
 To protect your assets from common on-chain exploits (such as malicious smart contracts or sandwich attacks), `web3-ops` includes built-in protective features:
 
@@ -56,7 +86,7 @@ Before broadcasting transactions, the `--simulate` option simulates the executio
 
 ---
 
-## ⚙️ 3. Security Hardening Best Practices
+## ⚙️ 4. Security Hardening Best Practices
 
 If you are running this tool in production or exposing it to an AI Agent, we strongly recommend following these hardening guidelines:
 
@@ -69,7 +99,7 @@ If you are running this tool in production or exposing it to an AI Agent, we str
 
 ---
 
-## 🐛 4. Reporting Vulnerabilities
+## 🐛 5. Reporting Vulnerabilities
 
 If you discover a security vulnerability in this project, please report it to us immediately. **Do not open a public GitHub issue for security bugs.**
 
@@ -86,6 +116,7 @@ We ask you to follow responsible disclosure guidelines:
 
 ---
 
-## 📜 5. Disclaimer
+## 📜 6. Disclaimer
 
 *This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.*
+
