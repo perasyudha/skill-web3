@@ -5,6 +5,8 @@
 [![Ethers: v6](https://img.shields.io/badge/Ethers-v6-blueviolet.svg)](https://docs.ethers.org/)
 [![Category: AI Agent Skill](https://img.shields.io/badge/Category-AI_Agent_Skill-success.svg)](#)
 
+![Web3 Ops CLI Terminal Dashboard](assets/cli_dashboard_mockup.png)
+
 A production-grade, state-of-the-art Web3 Agent Skill package built with Node.js and Ethers.js v6. Designed to execute EVM transactions, same-chain swaps, cross-chain bridges, NFT mints, and wallet portfolio checks. It can be run as a standalone CLI tool or integrated directly as a plugin/skill for AI agents (such as the **OpenClaw Telegram Bot**).
 
 ---
