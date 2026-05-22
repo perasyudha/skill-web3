@@ -51,13 +51,17 @@ graph TD
 You can install this skill in three different ways depending on your preference:
 
 ### Opsi A: Automated NPX Installer (Recommended)
-You can install this skill to your system's global agent skills directory using a single command:
+You can install this skill directly using our GitHub repository shorthand (no publishing required):
+```bash
+npx github:perasyudha/skill-web3
+```
+*Note: If the package has been published to the npm registry under `openclaw-web3-ops`, you can also use:*
 ```bash
 npx openclaw-web3-ops
 ```
-*Note: This will automatically download the package, copy it to `~/.agents/skills/web3-ops`, configure a default `.env`, and install all dependencies. If you wish to install to a custom path, pass it as an argument:*
+To install to a custom path instead of the default `~/.agents/skills/web3-ops`, pass the custom path as an argument:
 ```bash
-npx openclaw-web3-ops ./my-custom-path/web3-ops
+npx github:perasyudha/skill-web3 ./my-custom-path/web3-ops
 ```
 
 ### Opsi B: Conversational Install via AI Agent
@@ -230,10 +234,11 @@ node index.js transfer --chain base --to 0x742d35Cc6634C0532925a3b844Bc454e4438f
 To load this skill into your AI Agent framework, choose one of the following methods:
 
 ### Option A: Direct Installer (Recommended)
-Simply run the installer directly in your terminal:
+Simply run the installer directly in your terminal using the GitHub repository shorthand:
 ```bash
-npx openclaw-web3-ops
+npx github:perasyudha/skill-web3
 ```
+*(Or `npx openclaw-web3-ops` if it has been published to the npm registry).*
 This automatically sets up the skill directory at `~/.agents/skills/web3-ops` and installs all dependencies in one command.
 
 ### Option B: Conversational / Agentic Setup
