@@ -46,6 +46,16 @@ graph TD
 
 ---
 
+## 🔒 Security & Sandboxing (Keamanan & Privasi)
+
+Paket skill ini dirancang dengan prinsip **Zero-Knowledge to LLM** untuk memastikan keamanan tingkat tinggi terhadap kunci privat (Private Key / Mnemonic) Anda:
+
+*   **Lokal & Terisolasi (Local-First Storage):** Kunci privat Anda disimpan secara lokal pada mesin/komputer yang menjalankan runtime Node.js ini melalui variabel lingkungan di berkas `.env`. Kredensial ini **tidak pernah** dikirimkan ke server eksternal, bot API pihak ketiga, atau Telegram.
+*   **Isolasi Memori Kriptografi (Cryptographic Memory Isolation):** Penandatanganan transaksi (*transaction signing*) dilakukan sepenuhnya secara lokal di dalam memori runtime Node.js menggunakan modul `ethers.js`. Kunci privat dimuat hanya pada tingkat *runtime memory* lokal saat melakukan inisialisasi *signer*, lalu langsung dibersihkan.
+*   **LLM Context Barrier (Agen AI Tidak Bisa Membaca Key):** Model Bahasa Besar (LLM / AI Agent) hanya bertindak sebagai generator perintah CLI dan penerima *output* struktural (`stdout`). Agen AI **tidak memiliki akses baca direct** ke sistem file host untuk berkas `.env` maupun variabel lingkungan `PRIVATE_KEY`. Seluruh *output* yang dikembalikan ke Agen AI hanya berupa data publik terstruktur (seperti hash transaksi, saldo, dll.), sehingga meminimalkan risiko kebocoran data sensitif (*data leakage*).
+
+---
+
 ## 🚀 Quick Start & Installation
 
 You can install this skill in three different ways depending on your preference:
