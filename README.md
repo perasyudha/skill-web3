@@ -284,8 +284,8 @@ Ask your agent (e.g. Claude Code or OpenClaw Telegram Bot) to set it up:
 
 If you find this skill useful and want to support its active development, donations are highly appreciated:
 
-*   **EVM (Ethereum, Base, Arbitrum, Polygon, etc.)**: `0xbc039Ff9303B52e99a0D4f1465Fe18CE30738561`
-*   **Solana**: `ExZXfK8W2AMmAR5rZmPSud1PWVMgrN9kHWttUXxcJ1wr`
+*   **EVM (Ethereum, Base, Arbitrum, Polygon, etc.)**: `0x18a30d5db50d287dba669c5672cd71246cc4c4c6`
+*   **Solana**: `A6tSZZ5wJnTZewx6L5ZHa2Bgv7D2jWyFqwr1bM2AV777`
 
 ---
 
