@@ -62,8 +62,10 @@ Bridge and swap assets from one blockchain to another.
 
 ### 7. Mint NFT
 Mint or claim NFTs on a smart contract.
-*   **Usage:** `node skills/web3-ops/index.js mint --chain <chain> --contract <nft_contract_address> --function <signature> --args <json_array_arguments> --value <native_fee_to_send> [--json] [--simulate]`
-*   *Example:* `node skills/web3-ops/index.js mint --chain base --contract 0x123... --function "mint(uint256)" --args "[1]"`
+*   **Usage:** `node skills/web3-ops/index.js mint --chain <chain> --contract <nft_contract_address_or_url> [--function <signature>] [--args <json_array_arguments>] [--value <native_fee_to_send>] [--json] [--simulate]`
+*   *Note:* `--function`, `--args`, and `--value` are optional. If omitted, the skill will fetch the verified contract ABI from the explorer, auto-detect the mint function (e.g., `mint`, `claim`), and infer the arguments automatically.
+*   *Example:* `node skills/web3-ops/index.js mint --chain base --contract 0x123...`
+
 
 ### 8. Custom Transaction (Raw Transaction)
 Broadcast a custom raw transaction with hex data payload.
@@ -81,3 +83,5 @@ When interacting with the user regarding blockchain transactions:
 5.  **Explorer Links:** Always extract the `explorer` link from the output JSON and present it to the user so they can track block confirmation status.
 6.  **Security Notice:** Never request seed phrases, mnemonics, or private keys. The wallet configuration is loaded securely from the local server's `.env` file.
 7.  **Casual & Friendly Tone:** Explain transaction results, balances, or confirmations in a natural, casual, and friendly everyday chat style (e.g., like a helpful Web3 degen companion). Avoid robotic or overly dry responses, but always keep technical fields (like contract addresses and transaction hashes) accurate and formatted for easy copying.
+8.  **NFT Mint Autodetection:** If the user asks to mint an NFT by providing a contract address or marketplace/explorer link without specifying the function signature or arguments, run the `mint` command and omit the `--function`, `--args`, and `--value` parameters. The skill will automatically fetch the verified contract ABI, detect the mint function, and infer the arguments. Always suggest simulation using `--simulate` first to verify correctness.
+
