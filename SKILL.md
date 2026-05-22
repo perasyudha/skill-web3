@@ -71,17 +71,42 @@ Mint or claim NFTs on a smart contract.
 Broadcast a custom raw transaction with hex data payload.
 *   **Usage:** `node skills/web3-ops/index.js custom --chain <chain> --to <target_address> --data <hex_calldata> --value <native_amount> [--json] [--simulate]`
 
+### 9. Profit & Loss Tracker (PnL)
+Calculate the average buy price and current profit/loss of a token.
+*   **Usage:** `node skills/web3-ops/index.js pnl --chain <chain> --token <symbol_or_address> [--buyPrice <manual_usd_price>] [--json]`
+
+### 10. Cutloss & Takeprofit Monitor
+Monitor token price real-time and execute an auto-swap to USDC if limits are reached.
+*   **Usage:** `node skills/web3-ops/index.js monitor --chain <chain> --token <symbol_or_address> --amount <sell_amount> --cutloss <percent_or_price> --takeprofit <percent_or_price> [--max-checks <count>] [--interval <seconds>] [--alert] [--json]`
+
+### 11. Trading Signals
+Fetch daily candles and analyze RSI (14) & EMA (20/50) indicators to generate Buy/Sell recommendations.
+*   **Usage:** `node skills/web3-ops/index.js signal --chain <chain> --token <symbol_or_address> [--alert] [--json]`
+
+### 12. Smart Contract Auditor
+Perform a GoPlus security audit to detect honey pots, taxes, and code privileges.
+*   **Usage:** `node skills/web3-ops/index.js analyze --chain <chain> --token <symbol_or_address> [--json]`
+
+### 13. Whale Tracker
+Scan block explorer transfers for large transaction amounts exceeding a threshold.
+*   **Usage:** `node skills/web3-ops/index.js whales --chain <chain> --token <symbol_or_address> [--min-usd <value>] [--alert] [--json]`
+
 ---
 
 ## Agent Behavior & Telegram Prompt Guidelines
 
 When interacting with the user regarding blockchain transactions:
 1.  **Translate Intent to CLI:** Convert the user's natural language requests (e.g., "Check my Base portfolio", "Swap 10 USDC to ETH on Base", "Send 0.01 Sepolia ETH to 0x...") into the corresponding CLI command. Always append `--json` for programmatic parsing.
-2.  **Utilize Simulation Mode:** If the user is unsure, asks "will this transaction work?", or is making a high-value transfer, suggest simulating it first using `--simulate`.
-3.  **Display Copyable Addresses (CAs):** When printing token balances, portfolios, or transaction confirmations, format all contract addresses (CA) inside Telegram monospace code blocks (e.g. `` `0x940181a94A35A4569E4529A3CDfB74e38FD98631` ``) so users can tap to copy them instantly.
-4.  **Support Testnets & Custom RPCs:** If the user specifies a testnet (e.g., Sepolia) or requests a private RPC, append the `--rpc` flag to the command.
-5.  **Explorer Links:** Always extract the `explorer` link from the output JSON and present it to the user so they can track block confirmation status.
-6.  **Security Notice:** Never request seed phrases, mnemonics, or private keys. The wallet configuration is loaded securely from the local server's `.env` file.
-7.  **Casual & Friendly Tone:** Explain transaction results, balances, or confirmations in a natural, casual, and friendly everyday chat style (e.g., like a helpful Web3 degen companion). Avoid robotic or overly dry responses, but always keep technical fields (like contract addresses and transaction hashes) accurate and formatted for easy copying.
-8.  **NFT Mint Autodetection:** If the user asks to mint an NFT by providing a contract address or marketplace/explorer link without specifying the function signature or arguments, run the `mint` command and omit the `--function`, `--args`, and `--value` parameters. The skill will automatically fetch the verified contract ABI, detect the mint function, and infer the arguments. Always suggest simulation using `--simulate` first to verify correctness.
+2.  **No Raw JSON Outputs (CRITICAL):** Never output raw JSON (such as `{ "success": true, ... }`) directly to the user. Always parse the command's JSON output and translate it into a natural, friendly, and engaging human-readable response.
+3.  **Utilize Simulation Mode:** If the user is unsure, asks "will this transaction work?", or is making a high-value transfer, suggest simulating it first using `--simulate`.
+4.  **Display Copyable Addresses (CAs):** When printing token balances, portfolios, or transaction confirmations, format all contract addresses (CA) inside Telegram monospace code blocks (e.g. `` `0x940181a94A35A4569E4529A3CDfB74e38FD98631` ``) so users can tap to copy them instantly.
+5.  **Support Testnets & Custom RPCs:** If the user specifies a testnet (e.g., Sepolia) or requests a private RPC, append the `--rpc` flag to the command.
+6.  **Explorer Links:** Always extract the `explorer` link from the output JSON and present it to the user so they can track block confirmation status.
+7.  **Security Notice:** Never request seed phrases, mnemonics, or private keys. The wallet configuration is loaded securely from the local server's `.env` file.
+8.  **Casual & Friendly Tone:** Explain transaction results, balances, or confirmations in a natural, casual, and friendly everyday chat style (e.g., like a helpful Web3 degen companion). Avoid robotic or overly dry responses, but always keep technical fields (like contract addresses and transaction hashes) accurate and formatted for easy copying.
+9.  **Format PnL Reports:** Summarize PnL reports into friendly bullets. E.g., mention the current balance, average buy price, current market price, and the overall gain/loss in USD and ROI percentage.
+10. **Format Security Audits:** Highlight whether the contract is safe or a honeypot, buying/selling taxes, and list any risk findings with appropriate alert emojis (e.g., 🚨, ⚠️, ℹ️).
+11. **Format Trading Signals:** Present the overall signal recommendation (e.g., "STRONG BUY" in bold) along with the RSI (14) value and the EMA trend.
+12. **Format Whale Alerts:** Summarize detected whale transactions by showing the USD value, the amount of tokens, sender/receiver addresses, and a link to the transaction hash.
+13. **NFT Mint Autodetection:** If the user asks to mint an NFT by providing a contract address or marketplace/explorer link without specifying the function signature or arguments, run the `mint` command and omit the `--function`, `--args`, and `--value` parameters. The skill will automatically fetch the verified contract ABI, detect the mint function, and infer the arguments. Always suggest simulation using `--simulate` first to verify correctness.
 
