@@ -1,14 +1,14 @@
 ---
 name: web3-ops
 description: Melakukan transaksi on-chain Web3 (EVM) seperti cek saldo, transfer, swap, bridge lintas jaringan, dan minting NFT.
-metadata:
-  openclaw:
-    os: ["darwin", "linux", "win32"]
-    requires:
-      bins: ["node"]
-      env: ["PRIVATE_KEY"]
----
 
+env:
+  - PRIVATE_KEY
+
+requirements:
+  bins:
+    - node
+---
 # Web3 On-chain Operations Skill
 
 Skill ini memungkinkan Anda untuk berinteraksi langsung dengan blockchain EVM (Ethereum, Arbitrum, Base, Optimism, Polygon, BNB Chain, dll.) menggunakan CLI Node.js secara lokal.
