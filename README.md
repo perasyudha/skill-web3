@@ -233,6 +233,15 @@ To load this skill into your OpenClaw agent, follow these steps:
 
 ---
 
+## 💝 Support & Donation
+
+If you find this skill useful and want to support its active development, donations are highly appreciated:
+
+*   **EVM (Ethereum, Base, Arbitrum, Polygon, etc.)**: `0xbc039Ff9303B52e99a0D4f1465Fe18CE30738561`
+*   **Solana**: `ExZXfK8W2AMmAR5rZmPSud1PWVMgrN9kHWttUXxcJ1wr`
+
+---
+
 ## 🛡️ License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
