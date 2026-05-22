@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import "dotenv/config";
+
 import { Command } from "commander";
 import { getAddress, getBalance } from "./actions/wallet.js";
 import { transfer } from "./actions/transfer.js";
