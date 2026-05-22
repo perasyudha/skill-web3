@@ -46,13 +46,13 @@ graph TD
 
 ---
 
-## 🔒 Security & Sandboxing (Keamanan & Privasi)
+## 🔒 Security & Sandboxing
 
-Paket skill ini dirancang dengan prinsip **Zero-Knowledge to LLM** untuk memastikan keamanan tingkat tinggi terhadap kunci privat (Private Key / Mnemonic) Anda:
+This skill package is engineered with a **Zero-Knowledge to LLM** architectural design to guarantee top-tier security for your cryptographic private keys and mnemonics:
 
-*   **Lokal & Terisolasi (Local-First Storage):** Kunci privat Anda disimpan secara lokal pada mesin/komputer yang menjalankan runtime Node.js ini melalui variabel lingkungan di berkas `.env`. Kredensial ini **tidak pernah** dikirimkan ke server eksternal, bot API pihak ketiga, atau Telegram.
-*   **Isolasi Memori Kriptografi (Cryptographic Memory Isolation):** Penandatanganan transaksi (*transaction signing*) dilakukan sepenuhnya secara lokal di dalam memori runtime Node.js menggunakan modul `ethers.js`. Kunci privat dimuat hanya pada tingkat *runtime memory* lokal saat melakukan inisialisasi *signer*, lalu langsung dibersihkan.
-*   **LLM Context Barrier (Agen AI Tidak Bisa Membaca Key):** Model Bahasa Besar (LLM / AI Agent) hanya bertindak sebagai generator perintah CLI dan penerima *output* struktural (`stdout`). Agen AI **tidak memiliki akses baca direct** ke sistem file host untuk berkas `.env` maupun variabel lingkungan `PRIVATE_KEY`. Seluruh *output* yang dikembalikan ke Agen AI hanya berupa data publik terstruktur (seperti hash transaksi, saldo, dll.), sehingga meminimalkan risiko kebocoran data sensitif (*data leakage*).
+*   **Local-First Storage**: Your private keys are stored locally on the machine hosting the Node.js runtime environment via environment variables in the `.env` file. These credentials are **never** transmitted to external servers, third-party APIs, or Telegram bot hosts.
+*   **Cryptographic Memory Isolation**: Transaction signing occurs completely client-side in the Node.js runtime memory using `ethers.js`. The private key is loaded into runtime memory strictly for signer initialization and is garbage-collected immediately post-execution.
+*   **LLM Context Barrier (AI Agent Access Restriction)**: The Large Language Model (LLM / AI Agent) functions solely as a CLI command generator and a consumer of structured `stdout`. The LLM **does not have direct read access** to the host filesystem, the `.env` file, or the `PRIVATE_KEY` environment variable. All telemetry returned to the AI Agent is strictly public structured data (e.g., transaction hashes, public addresses, and balances), mitigating the risk of sensitive credential leakage.
 
 ---
 
@@ -283,8 +283,8 @@ Ask your agent (e.g. Claude Code or OpenClaw Telegram Bot) to set it up:
 ## 📜 Changelog
 
 ### v1.0.1
-*   **Keamanan & Dokumentasi**: Menambahkan penjelasan keamanan teknis (**Security & Sandboxing**) terkait penyimpanan *private key* lokal (local-first) dan pembatasan konteks pembacaan bagi model AI Agent (LLM).
-*   **Fitur NFT**: Implementasi dukungan *minting* NFT via autodeteksi URL marketplace dan fungsi *smart contract*.
+*   **Security & Documentation**: Added technical **Security & Sandboxing** documentation explaining local-first private key storage and LLM context boundary isolation.
+*   **NFT Features**: Implemented NFT minting capability with marketplace URL parsing and smart contract function autodetection.
 
 ---
 
