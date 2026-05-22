@@ -63,17 +63,23 @@ This skill package is engineered with a **Zero-Knowledge to LLM** architectural 
 You can install this skill in three different ways depending on your preference:
 
 ### Opsi A: Automated NPX Installer (Recommended)
-You can install this skill directly using our GitHub repository shorthand (no publishing required):
+You can install this skill directly using our GitHub repository shorthand:
 ```bash
+# Installs the latest version (v1.1.0 - Advanced Trading & Security)
 npx github:perasyudha/skill-web3
+
+# Installs the previous stable version (v1.0.1 - NFT & Sandboxing updates)
+npx github:perasyudha/skill-web3#v1.0.1
 ```
-*Note: If the package has been published to the npm registry under `openclaw-web3-ops`, you can also use:*
+*Note: If the package is published to the npm registry under `openclaw-web3-ops`, you can also use:*
 ```bash
 npx openclaw-web3-ops
+# Or for previous version:
+npx openclaw-web3-ops@1.0.1
 ```
-To install to a custom path instead of the default `~/.agents/skills/web3-ops`, pass the custom path as an argument:
+To install to a custom path instead of the default `~/.agents/skills/web3-ops`, pass the path as an argument:
 ```bash
-npx github:perasyudha/skill-web3 ./my-custom-path/web3-ops
+npx github:perasyudha/skill-web3#v1.0.1 ./my-custom-path/web3-ops
 ```
 
 ### Opsi B: Conversational Install via AI Agent
