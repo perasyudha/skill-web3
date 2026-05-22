@@ -98,11 +98,11 @@ program
 // 7. Mint NFT
 program
   .command("mint")
-  .description("Mint/claim an NFT on an EVM network")
-  .requiredOption("-c, --chain <chain>", "Blockchain network")
-  .requiredOption("-ct, --contract <contractAddress>", "NFT contract address")
-  .option("-f, --function <functionSig>", "Mint function signature", "mint(uint256)")
-  .option("-args, --args <jsonArray>", "Function arguments as a JSON array (e.g. '[1]')", "[1]")
+  .description("Mint/claim an NFT on an EVM network or via marketplace URL")
+  .option("-c, --chain <chain>", "Blockchain network (optional if contract is a marketplace URL)")
+  .requiredOption("-ct, --contract <contractAddress>", "NFT contract address or marketplace URL (OpenSea, Zora, Rarible)")
+  .option("-f, --function <functionSig>", "Mint function signature")
+  .option("-args, --args <jsonArray>", "Function arguments as a JSON array (e.g. '[1]')")
   .option("-v, --value <value>", "Native token value to send (for paid mints, in ETH/MATIC)", "0")
   .action((options) => {
     mintNft(getMergedOpts(options));
