@@ -298,7 +298,7 @@ export async function swapOrBridge(options) {
       throw new Error("Source network (--chain or --fromChain) is required.");
     }
 
-    const { wallet, chainConfig } = getWallet(originChainName, options);
+    const { wallet, chainConfig } = await getWallet(originChainName, options);
     const destChainConfig = getChainConfig(destChainName);
 
     // Resolve token addresses dynamically (Li.Fi API fallback)

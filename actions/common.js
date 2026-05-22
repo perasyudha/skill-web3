@@ -54,35 +54,67 @@ export const SUPPORTED_CHAINS = {
     id: 1,
     name: "Ethereum Mainnet",
     symbol: "ETH",
-    rpc: process.env.ETH_RPC_URL || "https://cloudflare-eth.com",
+    rpc: process.env.ETH_RPC_URL || "https://1rpc.io/eth",
+    rpcs: [
+      process.env.ETH_RPC_URL,
+      "https://1rpc.io/eth",
+      "https://rpc.ankr.com/eth",
+      "https://ethereum-rpc.publicnode.com",
+      "https://cloudflare-eth.com"
+    ].filter(Boolean),
     explorer: "https://etherscan.io"
   },
   arbitrum: {
     id: 42161,
     name: "Arbitrum One",
     symbol: "ETH",
-    rpc: process.env.ARB_RPC_URL || "https://arb1.arbitrum.io/rpc",
+    rpc: process.env.ARB_RPC_URL || "https://1rpc.io/arb",
+    rpcs: [
+      process.env.ARB_RPC_URL,
+      "https://1rpc.io/arb",
+      "https://rpc.ankr.com/arbitrum",
+      "https://arbitrum-one-rpc.publicnode.com",
+      "https://arb1.arbitrum.io/rpc"
+    ].filter(Boolean),
     explorer: "https://arbiscan.io"
   },
   base: {
     id: 8453,
     name: "Base",
     symbol: "ETH",
-    rpc: process.env.BASE_RPC_URL || "https://mainnet.base.org",
+    rpc: process.env.BASE_RPC_URL || "https://1rpc.io/base",
+    rpcs: [
+      "https://broken-rpc-endpoint-test-1.org",
+      "https://broken-rpc-endpoint-test-2.org"
+    ].filter(Boolean),
     explorer: "https://basescan.org"
   },
   optimism: {
     id: 10,
     name: "OP Mainnet",
     symbol: "ETH",
-    rpc: process.env.OP_RPC_URL || "https://mainnet.optimism.io",
+    rpc: process.env.OP_RPC_URL || "https://1rpc.io/op",
+    rpcs: [
+      process.env.OP_RPC_URL,
+      "https://1rpc.io/op",
+      "https://rpc.ankr.com/optimism",
+      "https://optimism-rpc.publicnode.com",
+      "https://mainnet.optimism.io"
+    ].filter(Boolean),
     explorer: "https://optimistic.etherscan.io"
   },
   polygon: {
     id: 137,
     name: "Polygon PoS",
     symbol: "POL",
-    rpc: process.env.POLYGON_RPC_URL || "https://polygon-rpc.com",
+    rpc: process.env.POLYGON_RPC_URL || "https://1rpc.io/polygon",
+    rpcs: [
+      process.env.POLYGON_RPC_URL,
+      "https://1rpc.io/polygon",
+      "https://rpc.ankr.com/polygon",
+      "https://polygon-bor-rpc.publicnode.com",
+      "https://polygon-rpc.com"
+    ].filter(Boolean),
     explorer: "https://polygonscan.com"
   },
   bsc: {
@@ -90,34 +122,66 @@ export const SUPPORTED_CHAINS = {
     name: "BNB Smart Chain",
     symbol: "BNB",
     rpc: process.env.BSC_RPC_URL || "https://1rpc.io/bnb",
+    rpcs: [
+      process.env.BSC_RPC_URL,
+      "https://1rpc.io/bnb",
+      "https://rpc.ankr.com/bsc",
+      "https://bsc-rpc.publicnode.com",
+      "https://bsc-dataseed.binance.org"
+    ].filter(Boolean),
     explorer: "https://bscscan.com"
   },
   avalanche: {
     id: 43114,
     name: "Avalanche C-Chain",
     symbol: "AVAX",
-    rpc: process.env.AVAX_RPC_URL || "https://api.avax.network/ext/bc/C/rpc",
+    rpc: process.env.AVAX_RPC_URL || "https://1rpc.io/avax",
+    rpcs: [
+      process.env.AVAX_RPC_URL,
+      "https://1rpc.io/avax",
+      "https://rpc.ankr.com/avalanche",
+      "https://avalanche-c-chain-rpc.publicnode.com",
+      "https://api.avax.network/ext/bc/C/rpc"
+    ].filter(Boolean),
     explorer: "https://snowtrace.io"
   },
   linea: {
     id: 59144,
     name: "Linea",
     symbol: "ETH",
-    rpc: process.env.LINEA_RPC_URL || "https://rpc.linea.build",
+    rpc: process.env.LINEA_RPC_URL || "https://1rpc.io/linea",
+    rpcs: [
+      process.env.LINEA_RPC_URL,
+      "https://1rpc.io/linea",
+      "https://linea-rpc.publicnode.com",
+      "https://rpc.linea.build"
+    ].filter(Boolean),
     explorer: "https://lineascan.build"
   },
   scroll: {
     id: 534352,
     name: "Scroll",
     symbol: "ETH",
-    rpc: process.env.SCROLL_RPC_URL || "https://rpc.scroll.io",
+    rpc: process.env.SCROLL_RPC_URL || "https://1rpc.io/scroll",
+    rpcs: [
+      process.env.SCROLL_RPC_URL,
+      "https://1rpc.io/scroll",
+      "https://scroll-rpc.publicnode.com",
+      "https://rpc.scroll.io"
+    ].filter(Boolean),
     explorer: "https://scrollscan.com"
   },
   zksync: {
     id: 324,
     name: "zkSync Era",
     symbol: "ETH",
-    rpc: process.env.ZKSYNC_RPC_URL || "https://mainnet.era.zksync.io",
+    rpc: process.env.ZKSYNC_RPC_URL || "https://1rpc.io/zksync2",
+    rpcs: [
+      process.env.ZKSYNC_RPC_URL,
+      "https://1rpc.io/zksync2",
+      "https://zksync-era-rpc.publicnode.com",
+      "https://mainnet.era.zksync.io"
+    ].filter(Boolean),
     explorer: "https://era.zksync.network"
   },
   sonic: {
@@ -125,6 +189,11 @@ export const SUPPORTED_CHAINS = {
     name: "Sonic Mainnet",
     symbol: "S",
     rpc: process.env.SONIC_RPC_URL || "https://rpc.soniclabs.com",
+    rpcs: [
+      process.env.SONIC_RPC_URL,
+      "https://rpc.soniclabs.com",
+      "https://sonic.drpc.org"
+    ].filter(Boolean),
     explorer: "https://sonicscan.org"
   },
   berachain: {
@@ -132,6 +201,11 @@ export const SUPPORTED_CHAINS = {
     name: "Berachain bArtio Testnet",
     symbol: "BERA",
     rpc: process.env.BERACHAIN_RPC_URL || "https://bartio.rpc.berachain.com",
+    rpcs: [
+      process.env.BERACHAIN_RPC_URL,
+      "https://bartio.rpc.berachain.com",
+      "https://berachain-bartio.drpc.org"
+    ].filter(Boolean),
     explorer: "https://bartio.beratrail.io"
   },
   sepolia: {
@@ -139,6 +213,11 @@ export const SUPPORTED_CHAINS = {
     name: "Ethereum Sepolia Testnet",
     symbol: "ETH",
     rpc: process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com",
+    rpcs: [
+      process.env.SEPOLIA_RPC_URL,
+      "https://ethereum-sepolia-rpc.publicnode.com",
+      "https://rpc.sepolia.org"
+    ].filter(Boolean),
     explorer: "https://sepolia.etherscan.io"
   },
   "base-sepolia": {
@@ -146,6 +225,11 @@ export const SUPPORTED_CHAINS = {
     name: "Base Sepolia Testnet",
     symbol: "ETH",
     rpc: process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
+    rpcs: [
+      process.env.BASE_SEPOLIA_RPC_URL,
+      "https://sepolia.base.org",
+      "https://base-sepolia.blockpi.network/v1/rpc/public"
+    ].filter(Boolean),
     explorer: "https://sepolia.basescan.org"
   }
 };
@@ -296,10 +380,77 @@ export function getChainConfig(chainInput) {
 }
 
 // Get Signer & Provider (supports options.rpc)
-export function getWallet(chainInput, options = {}) {
+export async function getWallet(chainInput, options = {}) {
   const chainConfig = getChainConfig(chainInput);
-  const rpc = options.rpc || chainConfig.rpc;
-  const provider = new ethers.JsonRpcProvider(rpc);
+  
+  let rpcUrls = [];
+  if (options.rpc) {
+    rpcUrls = [options.rpc];
+  } else {
+    rpcUrls = [...(chainConfig.rpcs || [chainConfig.rpc])];
+  }
+  
+  let provider;
+  let successRpcUrl = null;
+  
+  const tryUrls = async (urls) => {
+    for (const url of urls) {
+      try {
+        logInfo(`Trying RPC endpoint: ${url}...`, options);
+        
+        const possibleProvider = new ethers.JsonRpcProvider(url, chainConfig.id, {
+          staticNetwork: true
+        });
+        
+        const timeoutMs = options.rpcTimeout || 3500;
+        const checkPromise = possibleProvider.getBlockNumber();
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("RPC request timeout")), timeoutMs)
+        );
+        
+        await Promise.race([checkPromise, timeoutPromise]);
+        
+        provider = possibleProvider;
+        successRpcUrl = url;
+        break;
+      } catch (err) {
+        logWarning(`RPC endpoint failed: ${url} (${err.message})`, options);
+      }
+    }
+  };
+  
+  // Try local lists first
+  await tryUrls(rpcUrls);
+  
+  // If failed and no explicit --rpc was passed, try fetching from chainid.network (Chainlist)
+  if (!provider && !options.rpc) {
+    logInfo(`Local RPCs failed. Fetching alternative RPC list from Chainlist (chainid.network)...`, options);
+    try {
+      const response = await axios.get("https://chainid.network/chains.json", { timeout: 6000 });
+      if (response.data && Array.isArray(response.data)) {
+        const chainData = response.data.find(c => c.chainId === chainConfig.id);
+        if (chainData && Array.isArray(chainData.rpc)) {
+          const dynamicUrls = chainData.rpc
+            .filter(url => url && url.startsWith("http") && !url.includes("${"))
+            .map(url => url.trim());
+          
+          if (dynamicUrls.length > 0) {
+            logInfo(`Found ${dynamicUrls.length} alternative RPCs on Chainlist. Trying them...`, options);
+            await tryUrls(dynamicUrls);
+          }
+        }
+      }
+    } catch (err) {
+      logWarning(`Failed to fetch Chainlist database: ${err.message}`, options);
+    }
+  }
+  
+  if (!provider) {
+    throw new Error(`All configured RPC endpoints for ${chainConfig.name} failed to respond or are blocked. Please check your internet connection or configure a working custom RPC in your .env file.`);
+  }
+  
+  // Cache the working RPC
+  chainConfig.rpc = successRpcUrl;
   
   const privateKey = process.env.PRIVATE_KEY;
   const mnemonic = process.env.MNEMONIC;

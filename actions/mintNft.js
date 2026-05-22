@@ -24,7 +24,7 @@ export async function mintNft(options = {}) {
       throw new Error(`NFT contract address "${contractAddress}" is not a valid EVM address.`);
     }
 
-    const { wallet, chainConfig } = getWallet(chain, options);
+    const { wallet, chainConfig } = await getWallet(chain, options);
     
     // Parse arguments
     let parsedArgs = [];

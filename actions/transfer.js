@@ -21,7 +21,7 @@ export async function transfer(options = {}) {
   } = options;
 
   try {
-    const { wallet, provider, chainConfig } = getWallet(chainInput, options);
+    const { wallet, provider, chainConfig } = await getWallet(chainInput, options);
     
     if (!ethers.isAddress(toAddress)) {
       throw new Error(`Recipient address "${toAddress}" is not a valid EVM address.`);

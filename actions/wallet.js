@@ -20,7 +20,7 @@ import {
 export async function getAddress(options = {}) {
   try {
     const chainInput = options.chain || "ethereum";
-    const { wallet } = getWallet(chainInput, options);
+    const { wallet } = await getWallet(chainInput, options);
     console.log(JSON.stringify({
       success: true,
       address: wallet.address
@@ -39,7 +39,7 @@ export async function getBalance(options = {}) {
   const tokenInput = options.token;
   
   try {
-    const { wallet, provider, chainConfig } = getWallet(chainInput, options);
+    const { wallet, provider, chainConfig } = await getWallet(chainInput, options);
     
     if (!tokenInput) {
       // Check Native Balance
@@ -104,7 +104,7 @@ export async function getPortfolio(options = {}) {
   const chainInput = options.chain;
   
   try {
-    const { wallet, provider, chainConfig } = getWallet(chainInput, options);
+    const { wallet, provider, chainConfig } = await getWallet(chainInput, options);
     logInfo(`Scanning portfolio for ${wallet.address} on ${chainConfig.name}...`, options);
     
     // 1. Fetch native token balance

@@ -28,7 +28,7 @@ export async function executeCustomTx(options = {}) {
       throw new Error(`Transaction calldata must be a valid hex string starting with "0x".`);
     }
 
-    const { wallet, chainConfig } = getWallet(chain, options);
+    const { wallet, chainConfig } = await getWallet(chain, options);
     const valueWei = parseUnits(value, 18);
 
     if (!options.json) {
