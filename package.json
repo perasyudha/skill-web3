@@ -8,9 +8,11 @@
     "openclaw-web3-ops": "./bin/install.js"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "mcp": "node mcp-server.js"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "axios": "^1.6.8",
     "commander": "^12.0.0",
     "dotenv": "^16.4.5",

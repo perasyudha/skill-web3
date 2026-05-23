@@ -416,17 +416,59 @@ Ask your agent (e.g. Claude Code or OpenClaw Telegram Bot) to set it up:
 
 4. **Enable Auto-loading**: Upon boot, the agent framework automatically parses the `SKILL.md` manifest in the skill folder. This configures the LLM (e.g. Gemini) to interpret user requests and call the corresponding CLI command dynamically.
 
+## 🔌 Model Context Protocol (MCP) Integration
+
+You can run this project as a local **Model Context Protocol (MCP) Server**, allowing AI clients like Claude Desktop, Cursor, or Zed to connect to your Web3 wallet and run queries or transactions as native tools.
+
+### 1. Claude Desktop Configuration
+Add the following configuration to your `claude_desktop_config.json` (located at `%APPDATA%\Claude\claude_desktop_config.json` on Windows or `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+
+```json
+{
+  "mcpServers": {
+    "web3-ops": {
+      "command": "node",
+      "args": ["c:/Users/PERASAYUDHA/Documents/Agent/mcp-server.js"],
+      "env": {
+        "PRIVATE_KEY": "your_private_key_here",
+        "BASESCAN_API_KEY": "your_basescan_key",
+        "ETHERSCAN_API_KEY": "your_etherscan_key"
+      }
+    }
+  }
+}
+```
+
+*Note: Since the server automatically loads `.env` variables from its local directory, you can also just leave the `env` config in `claude_desktop_config.json` empty if your `.env` file is already set up inside the `web3-ops` folder.*
+
+### 2. Available MCP Tools
+When connected, the client exposes the following tools to the LLM:
+*   `get_address`: Get your configured wallet address.
+*   `get_balance`: Check coin or ERC-20 token balance.
+*   `scan_portfolio`: Scan wallet portfolio for active balances.
+*   `transfer`: Send coins or ERC-20 tokens (with optional simulation & anti-MEV).
+*   `swap`: Swap tokens on the same chain (with optional simulation & anti-MEV).
+*   `bridge`: Bridge and swap tokens cross-chain.
+*   `mint_nft`: Mint/claim NFTs via contract address or marketplace URL.
+*   `custom_tx`: Broadcast custom raw transaction hex data.
+*   `get_pnl`: Retrieve Profit & Loss stats for a token.
+*   `analyze_contract`: Run smart contract audits via GoPlus API.
+*   `get_trading_signal`: Get EMA crossover & RSI signal checks.
+*   `track_whales`: Scan explorer transfers for whale activity.
+
 ---
 
 ## 📜 Changelog
 
-### v1.1.0 (Advanced Trading & Security)
+### v1.1.0 (Advanced Trading, Security & MCP Support)
+*   **Model Context Protocol (MCP) Server**: Added native MCP server support (`mcp-server.js`) allowing AI agents (Claude Desktop, Cursor, etc.) to securely trigger wallet queries, security audits, and simulated swaps.
 *   **PnL Tracker (`pnl`)**: Calculate weighted average buy price (Avg Cost Basis) from historical Explorer API logs and compare it with live DexScreener market price to measure ROI.
 *   **Cutloss & Takeprofit Monitor (`monitor`)**: Set interactive price limits. Automates real-time price monitoring and executes an automatic swap to USDC using Li.Fi router on target hits.
 *   **Trading Signals (`signal`)**: Fetch OHLCV daily candle data via GeckoTerminal API and compute RSI (14) and EMA (20/50) trend crossover signals.
 *   **Smart Contract Security Audit (`analyze`)**: Audit token contracts via GoPlus Security API for honeypots, buy/sell taxes, owner privileges, and proxy setups.
 *   **Whale Tracker (`whales`)**: Scan block explorers for recent transaction transfers exceeding user-defined USD thresholds.
 *   **MEV Protection (`--anti-mev`)**: Route transactions on supported chains (Ethereum, Polygon, BSC) via private endpoints (Flashbots / BloXroute) to prevent sandwich attacks.
+
 
 ### v1.0.1
 *   **Security & Documentation**: Added technical **Security & Sandboxing** documentation explaining local-first private key storage and LLM context boundary isolation.
