@@ -12,9 +12,9 @@ import {
   printColor,
   getExplorerApiUrl,
   getExplorerApiKey,
-  resolveTokenAddress
+  resolveTokenAddress,
+  getCurrentPrice
 } from "./common.js";
-import { getCurrentPrice } from "./pnl.js";
 
 export async function trackWhales(options = {}) {
   const chainInput = options.chain;

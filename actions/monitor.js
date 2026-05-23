@@ -8,9 +8,9 @@ import {
   logError,
   printColor,
   resolveTokenAddress,
-  TOKEN_MAP
+  TOKEN_MAP,
+  getCurrentPrice
 } from "./common.js";
-import { getCurrentPrice } from "./pnl.js";
 import { swapOrBridge } from "./swapBridge.js";
 
 // Sleep helper

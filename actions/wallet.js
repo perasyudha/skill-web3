@@ -17,7 +17,8 @@ import {
   getExplorerApiUrl,
   getExplorerApiKey,
   TOKEN_MAP,
-  resolveTokenAddress
+  resolveTokenAddress,
+  getCurrentPrice
 } from "./common.js";
 
 // Get configured wallet address
@@ -48,15 +49,22 @@ export async function getBalance(options = {}) {
     if (!tokenInput) {
       // Check Native Balance
       const balance = await provider.getBalance(wallet.address);
+      const balanceFormatted = formatUnits(balance, 18);
+      const priceInfo = await getCurrentPrice("0x0000000000000000000000000000000000000000", chainConfig, options);
+      const priceUsd = priceInfo ? priceInfo.priceUsd : null;
+      const valueUsd = priceUsd ? parseFloat(balanceFormatted) * priceUsd : null;
+
       logSuccess(`Native balance checked successfully`, options);
       
       console.log(JSON.stringify({
         success: true,
         chain: chainConfig.name,
         address: wallet.address,
-        balance: formatUnits(balance, 18),
+        balance: balanceFormatted,
         symbol: chainConfig.symbol,
-        tokenAddress: "0x0000000000000000000000000000000000000000"
+        tokenAddress: "0x0000000000000000000000000000000000000000",
+        priceUsd: priceUsd,
+        valueUsd: valueUsd
       }, null, 2));
     } else {
       // Resolve Token Address dynamically
@@ -65,13 +73,20 @@ export async function getBalance(options = {}) {
       if (tokenAddress === "0x0000000000000000000000000000000000000000") {
         // Native balance resolved
         const balance = await provider.getBalance(wallet.address);
+        const balanceFormatted = formatUnits(balance, 18);
+        const priceInfo = await getCurrentPrice("0x0000000000000000000000000000000000000000", chainConfig, options);
+        const priceUsd = priceInfo ? priceInfo.priceUsd : null;
+        const valueUsd = priceUsd ? parseFloat(balanceFormatted) * priceUsd : null;
+
         console.log(JSON.stringify({
           success: true,
           chain: chainConfig.name,
           address: wallet.address,
-          balance: formatUnits(balance, 18),
+          balance: balanceFormatted,
           symbol: chainConfig.symbol,
-          tokenAddress: "0x0000000000000000000000000000000000000000"
+          tokenAddress: "0x0000000000000000000000000000000000000000",
+          priceUsd: priceUsd,
+          valueUsd: valueUsd
         }, null, 2));
         return;
       }
@@ -83,6 +98,10 @@ export async function getBalance(options = {}) {
         tokenContract.symbol(),
         tokenContract.name()
       ]);
+      const balanceFormatted = formatUnits(balance, decimals);
+      const priceInfo = await getCurrentPrice(tokenAddress, chainConfig, options);
+      const priceUsd = priceInfo ? priceInfo.priceUsd : null;
+      const valueUsd = priceUsd ? parseFloat(balanceFormatted) * priceUsd : null;
 
       logSuccess(`Token balance checked successfully`, options);
       console.log(JSON.stringify({
@@ -91,8 +110,10 @@ export async function getBalance(options = {}) {
         address: wallet.address,
         tokenAddress: tokenAddress,
         tokenName: name,
-        balance: formatUnits(balance, decimals),
-        symbol: symbol
+        balance: balanceFormatted,
+        symbol: symbol,
+        priceUsd: priceUsd,
+        valueUsd: valueUsd
       }, null, 2));
     }
   } catch (error) {
@@ -182,14 +203,32 @@ async function scanChainPortfolio(chainInput, options = {}) {
   
   const allResults = await Promise.all([nativeBalancePromise, ...balancePromises]);
   
-  const activeTokens = allResults
-    .filter(item => item !== null && item.balance > 0n)
-    .map(item => ({
-      symbol: item.symbol,
-      balance: formatUnits(item.balance, item.decimals),
-      tokenAddress: item.tokenAddress,
-      isNative: item.isNative
-    }));
+  const activeTokens = await Promise.all(
+    allResults
+      .filter(item => item !== null && item.balance > 0n)
+      .map(async (item) => {
+        const balanceFormatted = formatUnits(item.balance, item.decimals);
+        let priceUsd = null;
+        let valueUsd = null;
+        try {
+          const priceInfo = await getCurrentPrice(item.tokenAddress, chainConfig, options);
+          if (priceInfo) {
+            priceUsd = priceInfo.priceUsd;
+            valueUsd = parseFloat(balanceFormatted) * priceUsd;
+          }
+        } catch (err) {
+          // Ignore price fetching issues
+        }
+        return {
+          symbol: item.symbol,
+          balance: balanceFormatted,
+          tokenAddress: item.tokenAddress,
+          isNative: item.isNative,
+          priceUsd: priceUsd,
+          valueUsd: valueUsd
+        };
+      })
+  );
 
   return {
     chainName: chainConfig.name,
@@ -246,7 +285,9 @@ export async function getPortfolio(options = {}) {
           } else {
             for (const token of res.portfolio) {
               const symStr = printColor(token.symbol.padEnd(8), "cyan");
-              const balStr = printColor(Number(token.balance).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 6 }).padStart(12), "green");
+              const balFormatted = Number(token.balance).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 6 }).padStart(12);
+              const usdValStr = token.valueUsd !== null ? ` ($${token.valueUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})` : " (Price N/A)";
+              const balStr = printColor(balFormatted + usdValStr, "green");
               const caStr = token.isNative ? "" : printColor(` (CA: ${token.tokenAddress})`, "gray");
               console.log(`  ${symStr}: ${balStr}${caStr}`);
             }
@@ -281,7 +322,9 @@ export async function getPortfolio(options = {}) {
         } else {
           for (const token of res.portfolio) {
             const symStr = printColor(token.symbol.padEnd(8), "cyan");
-            const balStr = printColor(Number(token.balance).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 6 }).padStart(12), "green");
+            const balFormatted = Number(token.balance).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 6 }).padStart(12);
+            const usdValStr = token.valueUsd !== null ? ` ($${token.valueUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})` : " (Price N/A)";
+            const balStr = printColor(balFormatted + usdValStr, "green");
             const caStr = token.isNative ? "" : printColor(` (CA: ${token.tokenAddress})`, "gray");
             console.log(`${symStr}: ${balStr}${caStr}`);
           }

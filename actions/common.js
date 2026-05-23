@@ -536,3 +536,89 @@ export function formatUnits(value, decimals = 18) {
 export function parseUnits(value, decimals = 18) {
   return ethers.parseUnits(value.toString(), decimals);
 }
+
+// Fetch current token price in USD from DexScreener
+export async function getCurrentPrice(tokenAddress, chainConfig, options = {}) {
+  const isNative = tokenAddress === "0x0000000000000000000000000000000000000000";
+  
+  // If native, resolve to wrapped token if possible for DexScreener query, or look up WETH/WBNB
+  let queryAddress = tokenAddress;
+  if (isNative) {
+    // Look up wrapped version in TOKEN_MAP
+    if (chainConfig.id === 1) queryAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; // WETH
+    else if (chainConfig.id === 8453) queryAddress = "0x4200000000000000000000000000000000000006"; // WETH Base
+    else if (chainConfig.id === 42161) queryAddress = "0x82aF49447D8a07e3bd95BD0d56f352415231C111"; // WETH Arb
+    else if (chainConfig.id === 137) queryAddress = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"; // WMATIC
+    else if (chainConfig.id === 56) queryAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c"; // WBNB
+    else {
+      // Return fallback native price approximation from Li.Fi or CoinGecko if available
+      return await getNativePriceFallback(chainConfig.symbol, options);
+    }
+  }
+
+  try {
+    const url = `https://api.dexscreener.com/latest/dex/tokens/${queryAddress}`;
+    const response = await axios.get(url, { timeout: 5000 });
+    if (response.data && response.data.pairs && response.data.pairs.length > 0) {
+      // Find pair with high liquidity
+      const sortedPairs = response.data.pairs.sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0));
+      const bestPair = sortedPairs[0];
+      return {
+        priceUsd: parseFloat(bestPair.priceUsd || 0),
+        symbol: bestPair.baseToken.symbol,
+        name: bestPair.baseToken.name,
+        liquidityUsd: bestPair.liquidity?.usd || 0,
+        fdv: bestPair.fdv || 0,
+        priceChange24h: bestPair.priceChange?.h24 || 0
+      };
+    }
+  } catch (err) {
+    logWarning(`Failed to fetch price from DexScreener: ${err.message}`, options);
+  }
+  
+  // Fallback via Li.Fi
+  try {
+    const response = await axios.get("https://li.quest/v1/token", {
+      params: {
+        chain: chainConfig.id,
+        token: queryAddress
+      },
+      timeout: 5000
+    });
+    if (response.data && response.data.priceUSD) {
+      return {
+        priceUsd: parseFloat(response.data.priceUSD),
+        symbol: response.data.symbol,
+        name: response.data.name,
+        liquidityUsd: 0,
+        fdv: 0,
+        priceChange24h: 0
+      };
+    }
+  } catch (err) {
+    // Fail silently
+  }
+
+  return null;
+}
+
+// Fallback to get native asset price
+async function getNativePriceFallback(symbol, options = {}) {
+  try {
+    // DexScreener search by query
+    const url = `https://api.dexscreener.com/latest/dex/search?q=${symbol}`;
+    const response = await axios.get(url, { timeout: 5000 });
+    if (response.data && response.data.pairs) {
+      const nativePair = response.data.pairs.find(p => p.baseToken.symbol.toUpperCase() === symbol.toUpperCase());
+      if (nativePair) {
+        return {
+          priceUsd: parseFloat(nativePair.priceUsd || 0),
+          symbol: symbol,
+          name: symbol,
+          priceChange24h: nativePair.priceChange?.h24 || 0
+        };
+      }
+    }
+  } catch (err) {}
+  return { priceUsd: 0, symbol, name: symbol };
+}
