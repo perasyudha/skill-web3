@@ -1,15 +1,16 @@
 # OpenClaw Web3 Operations Skill
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node: >=18.0.0](https://img.shields.io/badge/Node-%3E%3D18.0.0-blue.svg)](https://nodejs.org/)
-[![Ethers: v6](https://img.shields.io/badge/Ethers-v6-blueviolet.svg)](https://docs.ethers.org/)
-[![Category: Security / Web3](https://img.shields.io/badge/Category-Secure_AI_Native_Web3_Ops-success.svg)](#)
+[![Security: Security-First](https://img.shields.io/badge/Security-Security--First-blue.svg)](#)
+[![Execution: Human-in-the-Loop](https://img.shields.io/badge/Execution-Human--in--the--Loop-orange.svg)](#)
+[![Privacy: Local-Only Keys](https://img.shields.io/badge/Privacy-Local--Only--Keys-success.svg)](#)
 
 ![Web3 Ops CLI Terminal Dashboard](assets/cli_dashboard_mockup.png)
 
-A **secure, non-custodial, AI-native Web3 operational skill** built with Node.js and Ethers.js v6. Designed for agentic workflows to execute EVM transactions, same-chain swaps, cross-chain bridges, NFT mints, and wallet portfolio scans with client-side key isolation. It can be run as a secure standalone CLI tool or integrated as a trusted sandbox plugin/skill for AI agents (such as the **OpenClaw Telegram Bot**).
+A **secure, non-custodial, AI-native Web3 operational skill with explicit execution safety** built with Node.js and Ethers.js v6. Designed for agentic workflows to execute wallet operations with client-side key isolation. It operates under a strict **Human-in-the-Loop** execution model, requiring explicit operator approval for any on-chain transaction.
 
 ---
+
 
 
 ## 🌟 Key Features
@@ -17,7 +18,7 @@ A **secure, non-custodial, AI-native Web3 operational skill** built with Node.js
 ### 📈 Advanced Trading & Security Features (New in v1.1.0)
 *   **🆕 Wallet Generation (`create-wallet`)**: Generate a random EVM address, private key, and mnemonic locally. Automatically saves them to the `.env` file with secure overwrite protection.
 *   **📊 PnL Tracker (`pnl`)**: Automatically parses incoming/outgoing token transfers via Block Explorer APIs to compute the weighted average cost basis (Avg Buy Price) of your holdings. Compares this with real-time market prices from DexScreener to calculate net USD profit/loss (PnL) and percentage ROI.
-*   **⏳ Cutloss & Takeprofit Monitor (`monitor`)**: Run active price monitoring in the foreground. Configurable with cutloss and takeprofit bounds (nominal USD or percentage-based). Automatically triggers a market sell swap to USDC via the Li.Fi aggregator when price boundaries are crossed.
+*   **⏳ Cutloss & Takeprofit Monitor (`monitor`)**: Run active price monitoring in the foreground. Configurable with cutloss and takeprofit bounds (nominal USD or percentage-based). Executes a pre-authorized safety swap to USDC via the Li.Fi aggregator when price boundaries are crossed.
 *   **🚦 Technical Trading Signals (`signal`)**: Fetches daily candle data (OHLCV) via the GeckoTerminal API to calculate **RSI (14)** and **EMA (20/50)** crossovers, returning trade recommendations (`STRONG BUY`, `BUY`, `NEUTRAL`, `SELL`, or `STRONG SELL`).
 *   **🛡️ Smart Contract Audit (`analyze`)**: Integrates GoPlus Security API to audit token contracts. Detects Honeypots, Buy/Sell taxes, Mintable supplies, Proxy configurations, and Ownership statuses to return a comprehensive security score.
 *   **🐋 Whale tracker (`whales`)**: Scans recent block explorer token transfers to filter and detect transfers exceeding user-defined USD thresholds (default: $50,000).
@@ -61,7 +62,30 @@ graph TD
 
 ---
 
+## 🛡️ Safety Model
+
+To protect user assets and prevent common security concerns associated with blockchain-based agent tools, `web3-ops` operates under a strict safety specification:
+
+*   **No Seed Phrase Handling**: The skill never requests, stores, or accesses mnemonics/seed phrases directly during active operations. 
+*   **No Credential Collection**: Private keys are handled strictly within local volatile memory and are never transmitted over network endpoints, APIs, or AI provider systems.
+*   **Explicit Transaction Confirmation**: Write actions (like transfers, swaps, bridges) require manual, explicit confirmation from the human operator before broadcasting.
+*   **Human-in-the-Loop Execution**: The tool is engineered as a secure operational utility. The AI agent acts as a command generator and output parser, leaving execution authority with the human controller.
+
+---
+
+## 📋 Example Safe Workflows
+
+The skill is designed for developer-grade operations, diagnostics, and secure execution. Typical workflows include:
+
+*   **Analyze ERC20 Contracts**: Perform read-only security audits on new or untrusted token addresses via the GoPlus API to check for high taxes, mintable parameters, and honeypot traps.
+*   **Monitor Wallet Balances**: Safely inspect portfolio allocations and active token balances across multiple EVM chains without writing state.
+*   **Inspect Token Transfers**: Run transaction diagnostics and whale tracker scans using explorer API integrations.
+*   **Review Suspicious Transactions**: Execute EVM simulations on-the-fly (`--simulate`) to verify gas costs and revert outputs prior to submission.
+
+---
+
 ## 🔒 Security, Threat Model & Permission Boundary
+
 
 This skill is designed with a **Zero-Knowledge to LLM** architectural pattern to ensure the highest levels of security and confidentiality for your private keys and seed phrases:
 
@@ -478,7 +502,7 @@ When connected, the client exposes the following tools to the LLM:
 *   **Model Context Protocol (MCP) Server**: Added native MCP server support (`mcp-server.js`) allowing AI agents (Claude Desktop, Cursor, etc.) to securely trigger wallet queries, security audits, and simulated swaps.
 *   **PnL Tracker (`pnl`)**: Calculate weighted average buy price (Avg Cost Basis) from historical Explorer API logs and compare it with live DexScreener market price to measure ROI.
 
-*   **Cutloss & Takeprofit Monitor (`monitor`)**: Set interactive price limits. Automates real-time price monitoring and executes an automatic swap to USDC using Li.Fi router on target hits.
+*   **Cutloss & Takeprofit Monitor (`monitor`)**: Set interactive price limits. Enables real-time price monitoring and executes a pre-authorized safety swap to USDC using Li.Fi router on target hits.
 *   **Trading Signals (`signal`)**: Fetch OHLCV daily candle data via GeckoTerminal API and compute RSI (14) and EMA (20/50) trend crossover signals.
 *   **Smart Contract Security Audit (`analyze`)**: Audit token contracts via GoPlus Security API for honeypots, buy/sell taxes, owner privileges, and proxy setups.
 *   **Whale Tracker (`whales`)**: Scan block explorers for recent transaction transfers exceeding user-defined USD thresholds.

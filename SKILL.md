@@ -9,9 +9,10 @@ requirements:
   bins:
     - node
 ---
-# Web3 On-chain Operations Skill
+# Secure AI-Native Web3 Operational Skill
 
-This skill allows the OpenClaw AI agent to interact directly with EVM blockchains (Ethereum, Arbitrum, Base, Optimism, Polygon, BNB Chain, Sonic, Sepolia, etc.) using a local Node.js CLI utility.
+This skill allows the OpenClaw AI agent to interface with EVM blockchains (Ethereum, Arbitrum, Base, Optimism, Polygon, BNB Chain, Sonic, Sepolia, etc.) using a local Node.js CLI utility under a strict Human-in-the-Loop safety model.
+
 
 ## Global Options
 
@@ -76,7 +77,7 @@ Calculate the average buy price and current profit/loss of a token.
 *   **Usage:** `node skills/web3-ops/index.js pnl --chain <chain> --token <symbol_or_address> [--buyPrice <manual_usd_price>] [--json]`
 
 ### 10. Cutloss & Takeprofit Monitor
-Monitor token price real-time and execute an auto-swap to USDC if limits are reached.
+Monitor token price in real-time and execute a pre-authorized safety swap to USDC if limits are reached.
 *   **Usage:** `node skills/web3-ops/index.js monitor --chain <chain> --token <symbol_or_address> --amount <sell_amount> --cutloss <percent_or_price> --takeprofit <percent_or_price> [--max-checks <count>] [--interval <seconds>] [--alert] [--json]`
 
 ### 11. Trading Signals
