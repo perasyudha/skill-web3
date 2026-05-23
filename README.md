@@ -13,29 +13,29 @@ A **secure, non-custodial, AI-native Web3 operational skill with explicit execut
 
 
 
-## 🌟 Key Features
+## Key Features
 
-### 📈 Advanced Trading & Security Features (New in v1.1.0)
-*   **🆕 Wallet Generation (`create-wallet`)**: Generate a random EVM address, private key, and mnemonic locally. Automatically saves them to the `.env` file with secure overwrite protection.
-*   **📊 PnL Tracker (`pnl`)**: Automatically parses incoming/outgoing token transfers via Block Explorer APIs to compute the weighted average cost basis (Avg Buy Price) of your holdings. Compares this with real-time market prices from DexScreener to calculate net USD profit/loss (PnL) and percentage ROI.
-*   **⏳ Cutloss & Takeprofit Monitor (`monitor`)**: Run active price monitoring in the foreground. Configurable with cutloss and takeprofit bounds (nominal USD or percentage-based). Executes a pre-authorized safety swap to USDC via the Li.Fi aggregator when price boundaries are crossed.
-*   **🚦 Technical Trading Signals (`signal`)**: Fetches daily candle data (OHLCV) via the GeckoTerminal API to calculate **RSI (14)** and **EMA (20/50)** crossovers, returning trade recommendations (`STRONG BUY`, `BUY`, `NEUTRAL`, `SELL`, or `STRONG SELL`).
-*   **🛡️ Smart Contract Audit (`analyze`)**: Integrates GoPlus Security API to audit token contracts. Detects Honeypots, Buy/Sell taxes, Mintable supplies, Proxy configurations, and Ownership statuses to return a comprehensive security score.
-*   **🐋 Whale tracker (`whales`)**: Scans recent block explorer token transfers to filter and detect transfers exceeding user-defined USD thresholds (default: $50,000).
-*   **⚡ Anti-MEV Protection (`--anti-mev`)**: Routes transactions on supported networks (Ethereum, Polygon, BSC) through private RPC nodes (e.g. Flashbots Protect, BloXroute) to defend against sandwich attacks by searchers.
-*   **🚨 Agent-Ready Alerts (`--alert`)**: Commands like `monitor`, `signal`, and `whales` support a `--alert` flag that embeds specific JSON alert payloads when targets are hit, enabling instant Telegram/Discord broadcast hooks.
+### Advanced Trading & Security Features (New in v1.1.0)
+*   **Wallet Generation (`create-wallet`)**: Generate a random EVM address, private key, and mnemonic locally. Automatically saves them to the `.env` file with secure overwrite protection.
+*   **PnL Tracker (`pnl`)**: Automatically parses incoming/outgoing token transfers via Block Explorer APIs to compute the weighted average cost basis (Avg Buy Price) of your holdings. Compares this with real-time market prices from DexScreener to calculate net USD profit/loss (PnL) and percentage ROI.
+*   **Cutloss & Takeprofit Monitor (`monitor`)**: Run active price monitoring in the foreground. Configurable with cutloss and takeprofit bounds (nominal USD or percentage-based). Executes a pre-authorized safety swap to USDC via the Li.Fi aggregator when price boundaries are crossed.
+*   **Technical Trading Signals (`signal`)**: Fetches daily candle data (OHLCV) via the GeckoTerminal API to calculate **RSI (14)** and **EMA (20/50)** crossovers, returning trade recommendations (`STRONG BUY`, `BUY`, `NEUTRAL`, `SELL`, or `STRONG SELL`).
+*   **Smart Contract Audit (`analyze`)**: Integrates GoPlus Security API to audit token contracts. Detects Honeypots, Buy/Sell taxes, Mintable supplies, Proxy configurations, and Ownership statuses to return a comprehensive security score.
+*   **Whale tracker (`whales`)**: Scans recent block explorer token transfers to filter and detect transfers exceeding user-defined USD thresholds (default: $50,000).
+*   **Anti-MEV Protection (`--anti-mev`)**: Routes transactions on supported networks (Ethereum, Polygon, BSC) through private RPC nodes (e.g. Flashbots Protect, BloXroute) to defend against sandwich attacks by searchers.
+*   **Agent-Ready Alerts (`--alert`)**: Commands like `monitor`, `signal`, and `whales` support a `--alert` flag that embeds specific JSON alert payloads when targets are hit, enabling instant Telegram/Discord broadcast hooks.
 
 
-### 💼 Core Features
-*   **🔍 Dynamic Token Resolution**: No more manual contract address lookups. Enter symbols like `USDC`, `AERO`, or `PEPE` directly—the tool dynamically resolves them to their correct contract addresses on-the-fly via the Li.Fi indexer.
-*   **💼 Smart Portfolio Scan (`portfolio`)**: Automatically scans the wallet's transaction history via block explorer APIs (Etherscan, Basescan, etc.) to discover all active tokens with a balance (`balance > 0`). Perfect for tracking meme/degen coins automatically.
-*   **📋 Click-to-Copy Contract Addresses (CA)**: Lists contract addresses alongside token symbols. When combined with `--json`, it allows Telegram bots to format them inside backticks (e.g., `` `0x...` ``) for click-to-copy convenience.
-*   **🧪 Transaction Simulation (`--simulate`)**: Performs an off-chain dry run using `estimateGas` and EVM simulation before broadcasting. Avoid wasted gas fees on reverting transactions!
-*   **🔀 Multi-Bridge & Swap Routing**: Supports automatic best-route discovery via **Li.Fi Aggregator**, or manual routes via **Relay.link** (ultra-fast bridging), **Uniswap V3**, and **PancakeSwap V3**.
-*   **🤖 AI Agent Friendly (`--json`)**: Appending `--json` silences all human-oriented logs and returns clean, structured JSON to `stdout` for reliable agent parsing.
-*   **🌐 Broad Network Support**: Pre-configured support for Ethereum, Arbitrum, Base, Optimism, Polygon, BNB Chain, Avalanche, Linea, Scroll, zkSync, **Sonic (Mainnet)**, and **Berachain (Testnet)**, plus Sepolia and Base Sepolia testnets.
-*   **⚡ RPC & Node Customization (`--rpc`)**: Override default public RPC nodes with custom private RPCs or testnet nodes dynamically on a per-command basis.
-*   **🎨 Premium Terminal UI**: Outputs colored, readable CLI logs using ANSI color coding.
+### Core Features
+*   **Dynamic Token Resolution**: No more manual contract address lookups. Enter symbols like `USDC`, `AERO`, or `PEPE` directly—the tool dynamically resolves them to their correct contract addresses on-the-fly via the Li.Fi indexer.
+*   **Smart Portfolio Scan (`portfolio`)**: Automatically scans the wallet's transaction history via block explorer APIs (Etherscan, Basescan, etc.) to discover all active tokens with a balance (`balance > 0`). Perfect for tracking meme/degen coins automatically.
+*   **Click-to-Copy Contract Addresses (CA)**: Lists contract addresses alongside token symbols. When combined with `--json`, it allows Telegram bots to format them inside backticks (e.g., `` `0x...` ``) for click-to-copy convenience.
+*   **Transaction Simulation (`--simulate`)**: Performs an off-chain dry run using `estimateGas` and EVM simulation before broadcasting. Avoid wasted gas fees on reverting transactions!
+*   **Multi-Bridge & Swap Routing**: Supports automatic best-route discovery via **Li.Fi Aggregator**, or manual routes via **Relay.link** (ultra-fast bridging), **Uniswap V3**, and **PancakeSwap V3**.
+*   **AI Agent Friendly (`--json`)**: Appending `--json` silences all human-oriented logs and returns clean, structured JSON to `stdout` for reliable agent parsing.
+*   **Broad Network Support**: Pre-configured support for Ethereum, Arbitrum, Base, Optimism, Polygon, BNB Chain, Avalanche, Linea, Scroll, zkSync, **Sonic (Mainnet)**, and **Berachain (Testnet)**, plus Sepolia and Base Sepolia testnets.
+*   **RPC & Node Customization (`--rpc`)**: Override default public RPC nodes with custom private RPCs or testnet nodes dynamically on a per-command basis.
+*   **Premium Terminal UI**: Outputs colored, readable CLI logs using ANSI color coding.
 
 ---
 
