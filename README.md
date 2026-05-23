@@ -147,6 +147,16 @@ ARBISCAN_API_KEY="your_arbiscan_key"
 
 ## 💻 CLI Commands & Examples
 
+### Generate New EVM Wallet (create-wallet)
+If you do not have an EVM wallet or want to generate a fresh one, run the `create-wallet` command. It will generate a random wallet and automatically write its credentials (`PRIVATE_KEY` and `MNEMONIC`) to your local `.env` file:
+```bash
+node index.js create-wallet
+```
+*Note: To prevent accidental loss of funds or keys, this command will immediately abort and refuse to run if it detects that you already have a wallet configured in `.env`. To force overwriting of existing keys, use the `--force` flag:*
+```bash
+node index.js create-wallet --force
+```
+
 ### Get Wallet Address
 Find out which wallet address is currently configured in the environment:
 ```bash
@@ -461,8 +471,10 @@ When connected, the client exposes the following tools to the LLM:
 ## 📜 Changelog
 
 ### v1.1.0 (Advanced Trading, Security & MCP Support)
+*   **Wallet Generation (`create-wallet`)**: Added local EVM wallet generator that creates a random address, private key, and mnemonic, automatically saving them to `.env` with secure overwrite protection.
 *   **Model Context Protocol (MCP) Server**: Added native MCP server support (`mcp-server.js`) allowing AI agents (Claude Desktop, Cursor, etc.) to securely trigger wallet queries, security audits, and simulated swaps.
 *   **PnL Tracker (`pnl`)**: Calculate weighted average buy price (Avg Cost Basis) from historical Explorer API logs and compare it with live DexScreener market price to measure ROI.
+
 *   **Cutloss & Takeprofit Monitor (`monitor`)**: Set interactive price limits. Automates real-time price monitoring and executes an automatic swap to USDC using Li.Fi router on target hits.
 *   **Trading Signals (`signal`)**: Fetch OHLCV daily candle data via GeckoTerminal API and compute RSI (14) and EMA (20/50) trend crossover signals.
 *   **Smart Contract Security Audit (`analyze`)**: Audit token contracts via GoPlus Security API for honeypots, buy/sell taxes, owner privileges, and proxy setups.

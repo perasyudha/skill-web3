@@ -2,7 +2,7 @@
 
 import "dotenv/config";
 import { Command } from "commander";
-import { getAddress, getBalance, getPortfolio } from "./actions/wallet.js";
+import { getAddress, getBalance, getPortfolio, createNewWallet } from "./actions/wallet.js";
 import { transfer } from "./actions/transfer.js";
 import { swapOrBridge } from "./actions/swapBridge.js";
 import { mintNft } from "./actions/mintNft.js";
@@ -189,4 +189,14 @@ program
     trackWhales(getMergedOpts(options));
   });
 
+// 14. Create EVM Wallet
+program
+  .command("create-wallet")
+  .description("Generate a random EVM wallet and configure its credentials in the .env file")
+  .option("--force", "Force overwrite of existing PRIVATE_KEY or MNEMONIC in .env", false)
+  .action((options) => {
+    createNewWallet(getMergedOpts(options));
+  });
+
 program.parse(process.argv);
+

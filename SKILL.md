@@ -91,7 +91,13 @@ Perform a GoPlus security audit to detect honey pots, taxes, and code privileges
 Scan block explorer transfers for large transaction amounts exceeding a threshold.
 *   **Usage:** `node skills/web3-ops/index.js whales --chain <chain> --token <symbol_or_address> [--min-usd <value>] [--alert] [--json]`
 
+### 14. Create EVM Wallet
+Generate a random EVM wallet and automatically write its credentials to `.env`.
+*   **Usage:** `node skills/web3-ops/index.js create-wallet [--force] [--json]`
+*   *Security Warning:* Run this command only locally in the CLI terminal. Do not let AI agents trigger it remotely over chat interfaces.
+
 ---
+
 
 ## Agent Behavior & Telegram Prompt Guidelines
 

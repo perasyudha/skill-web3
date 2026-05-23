@@ -1,5 +1,9 @@
 import { ethers } from "ethers";
 import axios from "axios";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import {
   getWallet,
   getChainConfig,
@@ -299,3 +303,99 @@ export async function getPortfolio(options = {}) {
     }, null, 2));
   }
 }
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Generate new random wallet and save to .env
+export async function createNewWallet(options = {}) {
+  const envPath = path.join(__dirname, "../.env");
+  const force = !!options.force;
+
+  try {
+    let envContent = "";
+    let hasPrivateKey = false;
+    let hasMnemonic = false;
+
+    if (fs.existsSync(envPath)) {
+      envContent = fs.readFileSync(envPath, "utf8");
+      
+      // Check for non-empty PRIVATE_KEY
+      const pkMatch = envContent.match(/^PRIVATE_KEY\s*=\s*["']?([^"'\r\n]+)["']?/m);
+      if (pkMatch && pkMatch[1] && pkMatch[1].trim() !== "" && pkMatch[1].trim() !== "0x0000000000000000000000000000000000000000") {
+        hasPrivateKey = true;
+      }
+      
+      // Check for non-empty MNEMONIC
+      const mnemonicMatch = envContent.match(/^MNEMONIC\s*=\s*["']?([^"'\r\n]+)["']?/m);
+      if (mnemonicMatch && mnemonicMatch[1] && mnemonicMatch[1].trim() !== "") {
+        hasMnemonic = true;
+      }
+    }
+
+    if ((hasPrivateKey || hasMnemonic) && !force) {
+      throw new Error("A wallet is already configured in `.env`. To prevent accidental loss of funds or keys, wallet generation is blocked. Use `--force` if you are absolutely sure you want to overwrite it.");
+    }
+
+    // Generate random wallet
+    const randomWallet = ethers.Wallet.createRandom();
+    const address = randomWallet.address;
+    const privateKey = randomWallet.privateKey;
+    const mnemonicPhrase = randomWallet.mnemonic.phrase;
+
+    const pkLine = `PRIVATE_KEY="${privateKey}"`;
+    const mnemonicLine = `MNEMONIC="${mnemonicPhrase}"`;
+
+    let newEnvContent = envContent;
+
+    const setEnvVar = (content, key, newLine) => {
+      const regex = new RegExp(`^${key}\\s*=.*$`, "m");
+      if (regex.test(content)) {
+        return content.replace(regex, newLine);
+      } else {
+        return content.trim() === "" ? newLine : `${content.trim()}\n${newLine}`;
+      }
+    };
+
+    newEnvContent = setEnvVar(newEnvContent, "PRIVATE_KEY", pkLine);
+    newEnvContent = setEnvVar(newEnvContent, "MNEMONIC", mnemonicLine);
+
+    // Write to .env
+    fs.writeFileSync(envPath, newEnvContent, { mode: 0o600 });
+
+    if (!options.json) {
+      console.log(`\n==================================================`);
+      console.log(printColor("🆕 NEW EVM WALLET GENERATED & CONFIGURED", "green"));
+      console.log(`==================================================`);
+      console.log(`Address     : ${address}`);
+      console.log(`Private Key : ${privateKey}`);
+      console.log(`Mnemonic    : ${mnemonicPhrase}`);
+      console.log(`==================================================`);
+      console.log(printColor("🔒 SECURITY WARNINGS:", "yellow"));
+      console.log(`1. Your private key and mnemonic have been saved directly to \`.env\`.`);
+      console.log(`2. Backup these credentials immediately. They are the ONLY way to recover your assets.`);
+      console.log(`3. Never share your private key/mnemonic with anyone, including AI prompts.`);
+      console.log(`4. CLEAR YOUR TERMINAL HISTORY NOW to wipe these keys from scrollback history.`);
+      console.log(`==================================================\n`);
+    }
+
+    console.log(JSON.stringify({
+      success: true,
+      address: address,
+      privateKey: privateKey,
+      mnemonic: mnemonicPhrase,
+      savedToEnv: true
+    }, null, 2));
+
+  } catch (error) {
+    if (!options.json) {
+      logError(error.message, options);
+    }
+    console.error(JSON.stringify({
+      success: false,
+      error: error.message
+    }, null, 2));
+    process.exit(1);
+  }
+}
+
