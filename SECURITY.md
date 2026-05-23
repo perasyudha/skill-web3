@@ -43,7 +43,7 @@ To ensure developer and operator confidence, we explicitly define the access lim
 | **Cannot Access** | **NO** | Host filesystem outside the project directory, system settings, user credentials, or other system environment variables. |
 | **Execute Shell** | **NO** | The skill does **not** execute arbitrary shell commands. It does not run scripts, compile external code, or invoke shell interpreters (`sh`, `bash`, `cmd`). It maps strict input arguments to predefined static functions using the `commander` package. |
 | **Sign Transactions** | **YES** | The skill signs transaction payloads locally in memory using `ethers.js` via the configured wallet. It only broadcasts signed payloads to public or private RPCs. |
-| **Store Keys** | **NO** | The skill has **zero key storage persistence**. It does not write keys to disks, local logs, external servers, databases, or cache files. Keys are loaded from `process.env` dynamically and erased immediately upon process exit. |
+| **Store Keys** | **NO / LOCAL ONLY** | The skill has **zero key storage persistence during operations**. It does not cache keys in memory or database them. The only write action is when the operator manually runs the `create-wallet` command to write new credentials to the local `.env` file. This action is protected by strict overwrite prevention. |
 | **Autonomous** | **NO** | The skill is **not autonomous**. It only executes on-demand when called via the CLI. Even the pricing `monitor` command runs in a synchronous, foreground loop started explicitly by the operator and terminates gracefully upon hitting limits or on user cancel (`Ctrl+C`). |
 
 ### B. Explicit Permission Boundaries
@@ -58,6 +58,7 @@ When integrating this skill into an AI Agent framework, the required system perm
 > 4. **Outbound Network Access**: Bounded strictly to:
 >    * Blockchain JSON-RPC endpoints (e.g., private anti-MEV RPCs, public Infura/Alchemy/Ankr nodes).
 >    * Public Web3 services: GeckoTerminal API, DexScreener API, GoPlus Security API, Li.Fi Aggregator API.
+> 5. **Wallet Generation Isolation**: The `create-wallet` tool is **excluded from the MCP server tool list**. It can only be executed directly via the local terminal CLI, ensuring that private keys/mnemonics are never transmitted over network contexts to LLM providers during generation.
 
 ---
 
