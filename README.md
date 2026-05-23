@@ -15,6 +15,7 @@ A **secure, non-custodial, AI-native Web3 operational skill** built with Node.js
 ## 🌟 Key Features
 
 ### 📈 Advanced Trading & Security Features (New in v1.1.0)
+*   **🆕 Wallet Generation (`create-wallet`)**: Generate a random EVM address, private key, and mnemonic locally. Automatically saves them to the `.env` file with secure overwrite protection.
 *   **📊 PnL Tracker (`pnl`)**: Automatically parses incoming/outgoing token transfers via Block Explorer APIs to compute the weighted average cost basis (Avg Buy Price) of your holdings. Compares this with real-time market prices from DexScreener to calculate net USD profit/loss (PnL) and percentage ROI.
 *   **⏳ Cutloss & Takeprofit Monitor (`monitor`)**: Run active price monitoring in the foreground. Configurable with cutloss and takeprofit bounds (nominal USD or percentage-based). Automatically triggers a market sell swap to USDC via the Li.Fi aggregator when price boundaries are crossed.
 *   **🚦 Technical Trading Signals (`signal`)**: Fetches daily candle data (OHLCV) via the GeckoTerminal API to calculate **RSI (14)** and **EMA (20/50)** crossovers, returning trade recommendations (`STRONG BUY`, `BUY`, `NEUTRAL`, `SELL`, or `STRONG SELL`).
@@ -22,6 +23,7 @@ A **secure, non-custodial, AI-native Web3 operational skill** built with Node.js
 *   **🐋 Whale tracker (`whales`)**: Scans recent block explorer token transfers to filter and detect transfers exceeding user-defined USD thresholds (default: $50,000).
 *   **⚡ Anti-MEV Protection (`--anti-mev`)**: Routes transactions on supported networks (Ethereum, Polygon, BSC) through private RPC nodes (e.g. Flashbots Protect, BloXroute) to defend against sandwich attacks by searchers.
 *   **🚨 Agent-Ready Alerts (`--alert`)**: Commands like `monitor`, `signal`, and `whales` support a `--alert` flag that embeds specific JSON alert payloads when targets are hit, enabling instant Telegram/Discord broadcast hooks.
+
 
 ### 💼 Core Features
 *   **🔍 Dynamic Token Resolution**: No more manual contract address lookups. Enter symbols like `USDC`, `AERO`, or `PEPE` directly—the tool dynamically resolves them to their correct contract addresses on-the-fly via the Li.Fi indexer.
@@ -69,7 +71,7 @@ This skill is designed with a **Zero-Knowledge to LLM** architectural pattern to
 ### 🛡️ Threat Model
 *   **Access Limits**: The skill can **only** read its own directory, custom configuration variables from `.env`, and public blockchain information (RPCs, Explorer APIs, Price feeds).
 *   **No Arbitrary Shell Execution**: The skill **does not execute any arbitrary commands or scripts** from inputs. Every user request maps strictly to predefined static functions using parameters parsed via `commander`.
-*   **No Key Storage Persistence**: The skill **does not store, cache, write, or database** your private keys. They are loaded purely in volatile memory at runtime.
+*   **No Key Storage Persistence during operations**: The skill does not cache, database, or store keys in memory. The single write action occurs when the operator manually runs the local `create-wallet` command to write new credentials to the local `.env` file, protected by overwrite prevention.
 *   **Non-Autonomous Loop**: The tool never executes unsolicited on-chain actions. Execution is entirely on-demand. Even the price `monitor` command runs in a foreground loop that can be exited safely via user cancellation (`Ctrl+C`).
 
 ### 📋 Permission Boundary Matrix
@@ -79,7 +81,8 @@ This skill is designed with a **Zero-Knowledge to LLM** architectural pattern to
 | **Read Access** | Read-Only Blockchain Queries | Fetching balances, contract security audits, transaction logs, and technical indicators. |
 | **Write Access**| Optional Wallet Signing | Required **only** for broadcasting transactions (swap, bridge, mint, transfer). Falls back to read-only mode if no keys are set. |
 | **Network Access**| Bounded Public APIs | Restricted strictly to the configured RPC endpoints, Block Explorers, DexScreener, GeckoTerminal, and GoPlus. |
-| **System Access**| Local Directory Sandboxing | No write permissions requested outside the local project directory. No system-level command execution. |
+| **System Access**| Local Directory Sandboxing | No write permissions requested outside the local project directory (except for writing newly generated wallet credentials to the local `.env` file during the `create-wallet` command). No system-level command execution. |
+
 
 For the full detailed security specifications, contact info, and vulnerability reporting procedures, refer to the [SECURITY.md](SECURITY.md) policy document.
 
