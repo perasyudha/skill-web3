@@ -151,24 +151,50 @@ npm install
 
 ### 2. Wallet Configuration
 
-Copy `.env.example` to `.env` and configure your credentials:
+To configure your EVM wallet manually, follow these steps:
 
+#### Step 1: Create the `.env` file
+Copy the template `.env.example` file to create your active configuration file:
 ```bash
+# On Linux/macOS:
 cp .env.example .env
+
+# On Windows (cmd):
+copy .env.example .env
+
+# On Windows (PowerShell):
+Copy-Item .env.example .env
 ```
 
-Open `.env` and fill in your private key or seed phrase:
+#### Step 2: Retrieve your Private Key
+Extract the private key from your preferred non-custodial wallet (e.g., MetaMask, Rabby, Coinbase Wallet):
+1. Open your browser wallet extension.
+2. Go to **Account Details** or **Settings > Security & Privacy**.
+3. Select **Show Private Key** (or **Export Private Key**), enter your wallet password, and copy the long hexadecimal string.
 
+> [!WARNING]
+> **Never share your private key or seed phrase with anyone!** Do not commit your `.env` file to any public repository. The `.env` file is already listed in `.gitignore` to prevent accidental uploads.
+
+#### Step 3: Insert the Key into `.env`
+Open the `.env` file in a text editor (e.g., VS Code, Notepad, Nano) and set the `PRIVATE_KEY` variable:
 ```env
-PRIVATE_KEY="0x..."
-# Or use mnemonic:
-# MNEMONIC="word1 word2 ... word12"
+PRIVATE_KEY="0x..." # Replace with your actual private key (must start with 0x)
+```
+*Note: Make sure your private key starts with the standard `0x` prefix and is wrapped in quotation marks.*
+
+#### Step 4: Verify Configuration
+Verify that the CLI correctly loads your wallet without exposing your private key:
+```bash
+node index.js address
+```
+If configured correctly, the terminal will print your corresponding public wallet address.
 
 # Block Explorer API Keys (Highly Recommended for Portfolio Auto-detection)
-BASESCAN_API_KEY="your_basescan_key"
-ETHERSCAN_API_KEY="your_etherscan_key"
-ARBISCAN_API_KEY="your_arbiscan_key"
-```
+# Fill these in the .env file if you wish to auto-detect all positive token balances:
+# BASESCAN_API_KEY="your_basescan_key"
+# ETHERSCAN_API_KEY="your_etherscan_key"
+# ARBISCAN_API_KEY="your_arbiscan_key"
+
 
 ---
 
