@@ -1,6 +1,6 @@
 ---
 name: web3-ops
-description: Perform EVM Web3 on-chain operations such as checking addresses, scanning portfolios, transferring assets, swapping/bridging tokens, and minting NFTs.
+description: Perform EVM Web3 on-chain operations: check addresses, scan portfolios, transfer assets, swap/bridge tokens, mint NFTs, custom raw tx, PnL tracking, Cutloss/Takeprofit monitor, RSI/EMA trading signals, GoPlus contract security audits, whale tracking, anti-MEV route routing, and wallet creation.
 
 env:
   - PRIVATE_KEY
