@@ -521,30 +521,6 @@ When connected, the client exposes the following tools to the LLM:
 
 ---
 
-## 📜 Changelog
-
-### v1.1.1 (LP Pair Redirection for Audits)
-*   **LP Pair Detection & Redirection (`analyze`)**: Automatically detects if the user inputs a Liquidity Pool Pair address instead of the main token contract address using DexScreener API. It redirects the security audit to the actual underlying base token contract address to ensure accurate honeypot, tax, and risk metrics.
-*   **JSON Audit Trace**: Added `isPairAddress`, `originalQueryAddress`, and `pairDetails` to the `--json` response format for greater transparency.
-
-### v1.1.0 (Advanced Trading, Security & MCP Support)
-*   **Wallet Generation (`create-wallet`)**: Added local EVM wallet generator that creates a random address, private key, and mnemonic, automatically saving them to `.env` with secure overwrite protection.
-*   **Model Context Protocol (MCP) Server**: Added native MCP server support (`mcp-server.js`) allowing AI agents (Claude Desktop, Cursor, etc.) to securely trigger wallet queries, security audits, and simulated swaps.
-*   **PnL Tracker (`pnl`)**: Calculate weighted average buy price (Avg Cost Basis) from historical Explorer API logs and compare it with live DexScreener market price to measure ROI.
-
-*   **Cutloss & Takeprofit Monitor (`monitor`)**: Set interactive price limits. Enables real-time price monitoring and executes a pre-authorized safety swap to USDC using Li.Fi router on target hits.
-*   **Trading Signals (`signal`)**: Fetch OHLCV daily candle data via GeckoTerminal API and compute RSI (14) and EMA (20/50) trend crossover signals.
-*   **Smart Contract Security Audit (`analyze`)**: Audit token contracts via GoPlus Security API for honeypots, buy/sell taxes, owner privileges, and proxy setups.
-*   **Whale Tracker (`whales`)**: Scan block explorers for recent transaction transfers exceeding user-defined USD thresholds.
-*   **MEV Protection (`--anti-mev`)**: Route transactions on supported chains (Ethereum, Polygon, BSC) via private endpoints (Flashbots / BloXroute) to prevent sandwich attacks.
-
-
-### v1.0.1
-*   **Security & Documentation**: Added technical **Security & Sandboxing** documentation explaining local-first private key storage and LLM context boundary isolation.
-*   **NFT Features**: Implemented NFT minting capability with marketplace URL parsing and smart contract function autodetection.
-
----
-
 ## 💝 Support & Donation
 
 If you find this skill useful and want to support its active development, donations are highly appreciated:
