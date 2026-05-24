@@ -5,7 +5,7 @@
 [![Execution: Human-in-the-Loop](https://img.shields.io/badge/Execution-Human--in--the--Loop-orange.svg)](#)
 [![Privacy: Local-Only Keys](https://img.shields.io/badge/Privacy-Local--Only--Keys-success.svg)](#)
 
-![Web3 Ops CLI Terminal Dashboard](assets/cli_dashboard_mockup.png)
+![Skill-Web3 Logo](assets/logo.png)
 
 A **secure, non-custodial, AI-native Web3 operational skill with explicit execution safety** built with Node.js and Ethers.js v6. Designed for agentic workflows to execute wallet operations with client-side key isolation. It operates under a strict **Human-in-the-Loop** execution model, requiring explicit operator approval for any on-chain transaction.
 
