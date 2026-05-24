@@ -195,6 +195,29 @@ If configured correctly, the terminal will print your corresponding public walle
 # ETHERSCAN_API_KEY="your_etherscan_key"
 # ARBISCAN_API_KEY="your_arbiscan_key"
 
+### 3. Custom / Private RPC Configuration (Highly Recommended)
+
+While `web3-ops` comes pre-configured with free public RPC nodes, using a **private/custom RPC** is highly recommended for active trading and production environments.
+
+#### Why use a Private RPC?
+1. **No Rate Limiting:** Public RPCs limit the number of requests you can make per second. Private RPCs provide a much higher request capacity, ensuring your commands never get throttled.
+2. **Speed & Reliability:** Private nodes propagate transactions to the network faster, significantly reducing transaction delays or "pending" states during high network traffic.
+3. **Data Security & Privacy:** Some public RPC nodes log user IP addresses and transaction request histories. Reputable private node providers have strict privacy and security standards.
+
+#### Step-by-Step Guide to Setup Alchemy RPC:
+1. **Sign Up:** Create a free developer account at [Alchemy](https://www.alchemy.com/) (or other providers like Infura, QuickNode, or Ankr).
+2. **Create an App:** From your Alchemy Dashboard, click **Create App**.
+3. **Select Network:** Choose the chain you want to interact with (e.g., **Base** or **Ethereum**) and set the network to **Mainnet**.
+4. **Copy API Key URL:** Once created, click **API Key** and copy the **HTTPS URL** (e.g., `https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY`).
+5. **Configure `.env`:** Open your local `.env` file and set the corresponding RPC environment variable with the copied URL:
+   ```env
+   # Example for Base:
+   BASE_RPC_URL="https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
+
+   # Example for Ethereum:
+   ETH_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
+   ```
+6. **Execution:** The skill will automatically prioritize your private RPC URL from `.env` over the public fallback nodes when running any command.
 
 ---
 
