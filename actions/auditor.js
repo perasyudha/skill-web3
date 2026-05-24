@@ -8,7 +8,8 @@ import {
   logWarning,
   logError,
   printColor,
-  resolveTokenAddress
+  resolveTokenAddress,
+  SUPPORTED_CHAINS
 } from "./common.js";
 
 // Check security of a token contract address using GoPlus Security API
@@ -23,7 +24,7 @@ export async function analyzeTokenSecurity(options = {}) {
       throw new Error("Please specify a target --token <symbolOrAddress> to analyze.");
     }
 
-    const tokenAddress = await resolveTokenAddress(tokenInput, chainConfig.id, options);
+    let tokenAddress = await resolveTokenAddress(tokenInput, chainConfig.id, options);
     
     if (tokenAddress === "0x0000000000000000000000000000000000000000") {
       // Native token is safe by default
@@ -40,6 +41,50 @@ export async function analyzeTokenSecurity(options = {}) {
         summary: "Native token of the network is secure by architecture."
       }, null, 2));
       return;
+    }
+
+    // Check if tokenAddress is actually a liquidity pair address on DexScreener
+    const chainKey = Object.keys(SUPPORTED_CHAINS).find(
+      key => SUPPORTED_CHAINS[key].id === chainConfig.id
+    );
+    
+    let isPairAddress = false;
+    let originalQueryAddress = tokenAddress;
+    let pairDetails = null;
+
+    if (chainKey) {
+      try {
+        const dexPairUrl = `https://api.dexscreener.com/latest/dex/pairs/${chainKey}/${tokenAddress}`;
+        const dexResponse = await axios.get(dexPairUrl, { timeout: 5000 });
+        if (
+          dexResponse.data &&
+          (dexResponse.data.pair || (dexResponse.data.pairs && dexResponse.data.pairs.length > 0))
+        ) {
+          const pair = dexResponse.data.pair || dexResponse.data.pairs[0];
+          if (pair.pairAddress.toLowerCase() === tokenAddress.toLowerCase()) {
+            isPairAddress = true;
+            pairDetails = {
+              baseSymbol: pair.baseToken.symbol,
+              quoteSymbol: pair.quoteToken.symbol,
+              dexId: pair.dexId
+            };
+            
+            logWarning(
+              `[Warning] Alamat ${tokenAddress} adalah Liquidity Pool Pair (${pair.baseToken.symbol}/${pair.quoteToken.symbol} di ${pair.dexId}).`,
+              options
+            );
+            logInfo(
+              `Hinata secara otomatis mengalihkan audit ke token utama: ${pair.baseToken.name} (${pair.baseToken.symbol}) - ${pair.baseToken.address}`,
+              options
+            );
+            
+            // Redirect target audit address to the actual base token address
+            tokenAddress = ethers.getAddress(pair.baseToken.address.toLowerCase());
+          }
+        }
+      } catch (err) {
+        // Suppress errors to not break execution if DexScreener is down
+      }
     }
 
     logInfo(`Contacting GoPlus Security API for token audit (${tokenAddress})...`, options);
@@ -166,7 +211,10 @@ export async function analyzeTokenSecurity(options = {}) {
       isMintable: isMintable,
       isOwnerRenounced: isOwnerRenounced,
       ownerAddress: ownerAddress,
-      risks: risks
+      risks: risks,
+      isPairAddress: isPairAddress,
+      originalQueryAddress: originalQueryAddress,
+      pairDetails: pairDetails
     }, null, 2));
 
   } catch (error) {

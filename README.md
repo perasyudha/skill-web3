@@ -523,6 +523,10 @@ When connected, the client exposes the following tools to the LLM:
 
 ## 📜 Changelog
 
+### v1.1.1 (LP Pair Redirection for Audits)
+*   **LP Pair Detection & Redirection (`analyze`)**: Automatically detects if the user inputs a Liquidity Pool Pair address instead of the main token contract address using DexScreener API. It redirects the security audit to the actual underlying base token contract address to ensure accurate honeypot, tax, and risk metrics.
+*   **JSON Audit Trace**: Added `isPairAddress`, `originalQueryAddress`, and `pairDetails` to the `--json` response format for greater transparency.
+
 ### v1.1.0 (Advanced Trading, Security & MCP Support)
 *   **Wallet Generation (`create-wallet`)**: Added local EVM wallet generator that creates a random address, private key, and mnemonic, automatically saving them to `.env` with secure overwrite protection.
 *   **Model Context Protocol (MCP) Server**: Added native MCP server support (`mcp-server.js`) allowing AI agents (Claude Desktop, Cursor, etc.) to securely trigger wallet queries, security audits, and simulated swaps.
