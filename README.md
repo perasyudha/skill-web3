@@ -75,12 +75,12 @@ To protect user assets and prevent common security concerns associated with bloc
 
 ## 📋 Example Safe Workflows
 
-The skill is designed for developer-grade operations, diagnostics, and secure execution. Typical workflows include:
+The skill is designed for early-stage testing, basic Web3 exploration, and secure transaction simulation. Typical workflows include:
 
-*   **Analyze ERC20 Contracts**: Perform read-only security audits on new or untrusted token addresses via the GoPlus API to check for high taxes, mintable parameters, and honeypot traps.
-*   **Monitor Wallet Balances**: Safely inspect portfolio allocations and active token balances across multiple EVM chains without writing state.
-*   **Inspect Token Transfers**: Run transaction diagnostics and whale tracker scans using explorer API integrations.
-*   **Review Suspicious Transactions**: Execute EVM simulations on-the-fly (`--simulate`) to verify gas costs and revert outputs prior to submission.
+*   **Audit New Tokens**: Perform quick security checks on newly discovered token contract addresses to check for high taxes or honeypot risks.
+*   **Track Portfolio Assets**: Inspect wallet balances and token holdings across multiple EVM networks simultaneously.
+*   **Analyze Transferred Tokens**: Check transaction history and track recent asset interactions.
+*   **Simulate Before Executing**: Test transactions off-chain (`--simulate`) to verify gas fees and confirm successful execution before broadcast.
 
 ---
 
