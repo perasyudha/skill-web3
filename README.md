@@ -189,12 +189,6 @@ node index.js address
 ```
 If configured correctly, the terminal will print your corresponding public wallet address.
 
-# Block Explorer API Keys (Highly Recommended for Portfolio Auto-detection)
-# Fill these in the .env file if you wish to auto-detect all positive token balances:
-# BASESCAN_API_KEY="your_basescan_key"
-# ETHERSCAN_API_KEY="your_etherscan_key"
-# ARBISCAN_API_KEY="your_arbiscan_key"
-
 ### 3. Custom / Private RPC Configuration (Highly Recommended)
 
 While `web3-ops` comes pre-configured with free public RPC nodes, using a **private/custom RPC** is highly recommended for active trading and production environments.
