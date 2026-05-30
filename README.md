@@ -138,7 +138,7 @@ npx github:perasyudha/skill-web3#v1.0.1 ./my-custom-path/web3-ops
 
 ### Opsi B: Conversational Install via AI Agent
 If you are running an AI Agent (like Claude Code, Cursor, or OpenClaw) with terminal capabilities, simply paste the following prompt in the chat:
-> *"Please install the web3-ops skill from https://github.com/perasyudha/skill-web3.git to my skills directory at ~/.agents/skills/web3-ops"*
+> *"Please install the web3-ops skill from https://github.com/perasyudha/skill-web3.git"*
 The agent will automatically clone, setup the folder structure, and install dependencies.
 
 ### Opsi C: Manual Setup
@@ -471,7 +471,7 @@ This automatically sets up the skill directory at `~/.agents/skills/web3-ops` an
 
 ### Option B: Conversational / Agentic Setup
 Ask your agent (e.g. Claude Code or OpenClaw Telegram Bot) to set it up:
-> *"Please install the web3-ops skill from https://github.com/perasyudha/skill-web3.git to my skills directory at ~/.agents/skills/web3-ops"*
+> *"Please install the web3-ops skill from https://github.com/perasyudha/skill-web3.git"*
 
 ### Option C: Manual Setup
 1. **Place the Skill Folder**: Clone this repository into your agent's skills directory (typically located at `~/.agents/skills/`):
