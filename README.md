@@ -151,67 +151,59 @@ npm install
 
 ### 2. Wallet Configuration
 
-To configure your EVM wallet manually, follow these steps:
+To process transactions, the AI Agent requires a dedicated cryptocurrency wallet. We strongly recommend creating a fresh, dedicated wallet (Burner Wallet) specifically for this bot.
 
-#### Step 1: Create the `.env` file
-Copy the template `.env.example` file to create your active configuration file:
+Before starting, **ensure your terminal is inside the installation folder** by typing:
 ```bash
-# On Linux/macOS:
-cp .env.example .env
-
-# On Windows (cmd):
-copy .env.example .env
-
-# On Windows (PowerShell):
-Copy-Item .env.example .env
+cd ~/.openclaw/plugin-skills/web3-ops
 ```
 
-#### Step 2: Retrieve your Private Key
-Extract the private key from your preferred non-custodial wallet (e.g., MetaMask, Rabby, Coinbase Wallet):
-1. Open your browser wallet extension.
-2. Go to **Account Details** or **Settings > Security & Privacy**.
-3. Select **Show Private Key** (or **Export Private Key**), enter your wallet password, and copy the long hexadecimal string.
+Choose one of the following setup methods:
 
-> [!WARNING]
-> **Never share your private key or seed phrase with anyone!** Do not commit your `.env` file to any public repository. The `.env` file is already listed in `.gitignore` to prevent accidental uploads.
-
-#### Step 3: Insert the Key into `.env`
-Open the `.env` file in a text editor (e.g., VS Code, Notepad, Nano) and set the `PRIVATE_KEY` variable:
-```env
-PRIVATE_KEY="0x..." # Replace with your actual private key (must start with 0x)
+**Option A: Auto-Generate Wallet (Highly Recommended 🔥)**
+The easiest way! Simply run this command in your terminal:
+```bash
+node index.js create-wallet
 ```
-*Note: Make sure your private key starts with the standard `0x` prefix and is wrapped in quotation marks.*
+The system will automatically generate a new wallet and securely store your *Private Key* in the `.env` file. *(Don't forget to write down the Mnemonic/Seed Phrase displayed on your screen!)*
 
-#### Step 4: Verify Configuration
-Verify that the CLI correctly loads your wallet without exposing your private key:
+**Option B: Import Existing Wallet (Manual)**
+If you prefer to use an existing wallet (e.g., from MetaMask):
+1. Open **File Explorer** (Windows), **Finder** (Mac), or **File Manager / Files** (Linux), and navigate to the `~/.openclaw/plugin-skills/web3-ops` folder. 
+   *(Tip: On Linux/Mac, press `Ctrl+H` or `Cmd+Shift+.` to reveal hidden files).*
+2. Rename the `.env.example` file to `.env`.
+3. Open the `.env` file using a built-in app like **Notepad** (Windows), **TextEdit** (Mac), or **Text Editor / Nano** (Linux).
+4. Remove the `#` symbol and insert your Private Key like this:
+   `PRIVATE_KEY="0xYourPrivateKeyHere..."`
+5. Save the file.
+
+> **⚠️ SECURITY WARNING:** Never share your `.env` file or Private Key with anyone!
+
+**Verify Your Setup:**
+Run this command in the terminal to ensure your wallet is correctly connected:
 ```bash
 node index.js address
 ```
-If configured correctly, the terminal will print your corresponding public wallet address.
+If successful, your public wallet Address will be printed on the screen.
 
-### 3. Custom / Private RPC Configuration (Highly Recommended)
+### 3. Private RPC Configuration (Optional but Recommended)
 
-While `web3-ops` comes pre-configured with free public RPC nodes, using a **private/custom RPC** is highly recommended for active trading and production environments.
+By default, this skill works out-of-the-box using free public connections. However, if your transactions frequently fail, process slowly, or you want to execute trades faster, we highly recommend setting up a **Private RPC**.
 
-#### Why use a Private RPC?
-1. **No Rate Limiting:** Public RPCs limit the number of requests you can make per second. Private RPCs provide a much higher request capacity, ensuring your commands never get throttled.
-2. **Speed & Reliability:** Private nodes propagate transactions to the network faster, significantly reducing transaction delays or "pending" states during high network traffic.
-3. **Data Security & Privacy:** Some public RPC nodes log user IP addresses and transaction request histories. Reputable private node providers have strict privacy and security standards.
+**How to set it up:**
 
-#### Step-by-Step Guide to Setup Alchemy RPC:
-1. **Sign Up:** Create a free developer account at [Alchemy](https://www.alchemy.com/) (or other providers like Infura, QuickNode, or Ankr).
-2. **Create an App:** From your Alchemy Dashboard, click **Create App**.
-3. **Select Network:** Choose the chain you want to interact with (e.g., **Base** or **Ethereum**) and set the network to **Mainnet**.
-4. **Copy API Key URL:** Once created, click **API Key** and copy the **HTTPS URL** (e.g., `https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY`).
-5. **Configure `.env`:** Open your local `.env` file and set the corresponding RPC environment variable with the copied URL:
-   ```env
-   # Example for Base:
-   BASE_RPC_URL="https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
+1. Sign up for a free account at [Alchemy.com](https://www.alchemy.com/).
+2. Create a new App (Select your desired network, e.g., *Base* or *Ethereum Mainnet*).
+3. Copy the **HTTPS URL** from your *API Key* button.
+4. Open **File Explorer** (Windows), **Finder** (Mac), or **File Manager** (Linux), and navigate to the `~/.openclaw/plugin-skills/web3-ops` folder.
+   *(Tip: On Linux/Mac, press `Ctrl+H` or `Cmd+Shift+.` to reveal hidden files).*
+5. Open your `.env` file using **Notepad** (Windows), **TextEdit** (Mac), or **Text Editor** (Linux).
+6. Find the network line that matches your Alchemy App, and paste the URL inside the quotation marks.
+   *Example for the Base network:* 
+   `BASE_RPC_URL="https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY"`
+7. Save the file.
 
-   # Example for Ethereum:
-   ETH_RPC_URL="https://eth-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
-   ```
-6. **Execution:** The skill will automatically prioritize your private RPC URL from `.env` over the public fallback nodes when running any command.
+Done! Your AI Agent will now automatically route transactions through this VIP/Private connection, ensuring maximum speed and reliability.
 
 ---
 
